@@ -16,7 +16,7 @@
     "typecheck": "npm run typecheck -w @arc-mcp/applescript && npm run typecheck -w @arc-mcp/browser && npm run typecheck -w arc-mcp-server",
     "pack": "npm run build && cd packages/server && npx @anthropic-ai/mcpb pack",
     "ci": "npm run typecheck && npm run build",
-    "postinstall": "npm run build"
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
