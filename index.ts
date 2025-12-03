@@ -191,6 +191,42 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: "click_element",
+        description: "Click an element on the page using a CSS selector",
+        inputSchema: {
+          type: "object",
+          properties: {
+            selector: {
+              type: "string",
+              description: "CSS selector for the element to click",
+            },
+            tab_id: {
+              type: "number",
+              description: "ID of the tab (optional, defaults to current)",
+            },
+          },
+          required: ["selector"],
+        },
+      },
+      {
+        name: "get_dom_tree",
+        description: "Get a simplified DOM tree of the current page showing interactive elements",
+        inputSchema: {
+          type: "object",
+          properties: {
+            max_depth: {
+              type: "number",
+              description: "Maximum depth to traverse (default: 5)",
+              default: 5,
+            },
+            tab_id: {
+              type: "number",
+              description: "ID of the tab (optional, defaults to current)",
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -400,6 +436,117 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             tell front window
               tell ${tabSelector}
                 execute javascript "document.body.innerText"
+              end tell
+            end tell
+          end tell
+        `;
+        const result = executeAppleScript(script);
+        return {
+          content: [
+            {
+              type: "text",
+              text: result,
+            },
+          ],
+        };
+      }
+
+      case "click_element": {
+        const { selector, tab_id } = args as { selector: string; tab_id?: number };
+        const tabSelector = tab_id ? `tab ${tab_id}` : "active tab";
+        const jsCode = `
+          (function() {
+            const element = document.querySelector('${selector.replace(/'/g, "\\'")}');
+            if (!element) {
+              return 'Error: Element not found with selector: ${selector.replace(/'/g, "\\'")}';
+            }
+            element.click();
+            return 'Clicked element: ' + element.tagName + (element.id ? '#' + element.id : '') + (element.className ? '.' + element.className.split(' ').join('.') : '');
+          })()
+        `;
+        const script = `
+          tell application "Arc"
+            tell front window
+              tell ${tabSelector}
+                execute javascript "${jsCode.replace(/"/g, '\\"').replace(/\n/g, ' ')}"
+              end tell
+            end tell
+          end tell
+        `;
+        const result = executeAppleScript(script);
+        return {
+          content: [
+            {
+              type: "text",
+              text: result,
+            },
+          ],
+        };
+      }
+
+      case "get_dom_tree": {
+        const { max_depth = 5, tab_id } = args as { max_depth?: number; tab_id?: number };
+        const tabSelector = tab_id ? `tab ${tab_id}` : "active tab";
+        const jsCode = `
+          (function() {
+            function isInteractive(el) {
+              const tag = el.tagName.toLowerCase();
+              const interactiveTags = ['a', 'button', 'input', 'select', 'textarea', 'label'];
+              const hasClick = el.onclick || el.getAttribute('onclick');
+              const hasRole = ['button', 'link', 'tab', 'menuitem'].includes(el.getAttribute('role'));
+              return interactiveTags.includes(tag) || hasClick || hasRole;
+            }
+
+            function getSelector(el) {
+              if (el.id) return '#' + el.id;
+              if (el.className && typeof el.className === 'string') {
+                const classes = el.className.trim().split(/\\s+/).slice(0, 2).join('.');
+                return el.tagName.toLowerCase() + (classes ? '.' + classes : '');
+              }
+              return el.tagName.toLowerCase();
+            }
+
+            function traverse(el, depth, maxDepth) {
+              if (depth > maxDepth) return null;
+
+              const children = [];
+              for (let child of el.children) {
+                const childNode = traverse(child, depth + 1, maxDepth);
+                if (childNode) children.push(childNode);
+              }
+
+              const isInteractiveEl = isInteractive(el);
+              if (!isInteractiveEl && children.length === 0 && depth > 0) {
+                return null;
+              }
+
+              const node = {
+                tag: el.tagName.toLowerCase(),
+                selector: getSelector(el),
+                text: el.textContent ? el.textContent.substring(0, 50).trim() : ''
+              };
+
+              if (isInteractiveEl) {
+                node.interactive = true;
+                if (el.tagName.toLowerCase() === 'a') node.href = el.href;
+                if (el.tagName.toLowerCase() === 'button') node.type = el.type;
+              }
+
+              if (children.length > 0) {
+                node.children = children;
+              }
+
+              return node;
+            }
+
+            return JSON.stringify(traverse(document.body, 0, ${max_depth}), null, 2);
+          })()
+        `;
+        const script = `
+          tell application "Arc"
+            tell front window
+              tell ${tabSelector}
+                execute javascript "${jsCode.replace(/"/g, '\\"').replace(/\n/g, ' ')}"
               end tell
             end tell
           end tell

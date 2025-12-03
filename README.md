@@ -24,6 +24,8 @@ Download the latest `.mcpb` from [releases](https://github.com/andrewgazelka/arc
 "Open github.com in Arc"
 "List all my tabs"
 "Get the page content"
+"Show me the DOM tree of interactive elements"
+"Click the login button"
 "Execute document.title in the current tab"
 "Close tab 3"
 ```
@@ -42,6 +44,8 @@ Download the latest `.mcpb` from [releases](https://github.com/andrewgazelka/arc
 | `go_forward` | Navigate forward |
 | `execute_javascript` | Run JS in tab |
 | `get_page_content` | Extract page text |
+| `click_element` | Click element by CSS selector |
+| `get_dom_tree` | Get simplified interactive DOM tree |
 
 ## Requirements
 
