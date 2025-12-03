@@ -23,52 +23,13 @@ That's it! The extension will be installed and ready to use.
 
 ## Use Cases
 
-<table>
-<tr>
-<td width="50%">
+<img src="https://cdn.simpleicons.org/googlemaps/4285F4" width="16" height="16" /> **Flight Search** — Compare prices across airlines, check availability, book tickets
 
-**✈️ Flight Search**
-```
-"Open Google Flights"
-"Click the departure city field"
-"Find the cheapest flight to Tokyo"
-```
+<img src="https://cdn.simpleicons.org/amazon/FF9900" width="16" height="16" /> **Shopping** — Search products, read reviews, add to cart, checkout
 
-</td>
-<td width="50%">
+<img src="https://cdn.simpleicons.org/instacart/43B02A" width="16" height="16" /> **Groceries** — Navigate store catalog, build cart, schedule delivery
 
-**🛒 Shopping**
-```
-"Search Amazon for wireless headphones"
-"Click on the first result"
-"Add to cart"
-```
-
-</td>
-</tr>
-<tr>
-<td>
-
-**🥗 Groceries**
-```
-"Open Instacart"
-"Get the DOM tree to find products"
-"Add items to my cart"
-```
-
-</td>
-<td>
-
-**📊 Research**
-```
-"Open 5 tabs for competitor analysis"
-"Extract content from each tab"
-"Summarize key features"
-```
-
-</td>
-</tr>
-</table>
+<img src="https://cdn.simpleicons.org/databricks/FF3621" width="16" height="16" /> **Research** — Open multiple sources, extract data, synthesize information
 
 ## Tools
 
