@@ -1,6 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-  <rect x="1" y="3" width="6" height="5" rx="1" fill="#667085"/>
-  <rect x="9" y="3" width="6" height="5" rx="1" fill="#667085"/>
-  <rect x="1" y="10" width="6" height="5" rx="1" fill="#667085"/>
-  <rect x="9" y="10" width="6" height="5" rx="1" fill="#667085"/>
+  <rect x="1.5" y="3" width="5.5" height="4.5" rx="0.8" fill="url(#research-gradient-1)"/>
+  <rect x="9" y="3" width="5.5" height="4.5" rx="0.8" fill="url(#research-gradient-2)"/>
+  <rect x="1.5" y="9" width="5.5" height="4.5" rx="0.8" fill="url(#research-gradient-3)"/>
+  <rect x="9" y="9" width="5.5" height="4.5" rx="0.8" fill="url(#research-gradient-4)"/>
+  <defs>
+    <linearGradient id="research-gradient-1" x1="1.5" y1="3" x2="7" y2="7.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#3F3F46"/>
+    </linearGradient>
+    <linearGradient id="research-gradient-2" x1="9" y1="3" x2="14.5" y2="7.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#3F3F46"/>
+    </linearGradient>
+    <linearGradient id="research-gradient-3" x1="1.5" y1="9" x2="7" y2="13.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#3F3F46"/>
+    </linearGradient>
+    <linearGradient id="research-gradient-4" x1="9" y1="9" x2="14.5" y2="13.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#3F3F46"/>
+    </linearGradient>
+  </defs>
 </svg>

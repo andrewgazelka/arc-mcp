@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-  <path d="M5 2L4 5H12L11 2H5Z" fill="#43B02A"/>
-  <path d="M4 5L3.5 13C3.45 13.55 3.9 14 4.45 14H11.55C12.1 14 12.55 13.55 12.5 13L12 5H4Z" fill="#43B02A"/>
-  <circle cx="6" cy="10" r="1" fill="#fff"/>
-  <circle cx="10" cy="10" r="1" fill="#fff"/>
+  <path d="M5.5 2L4.5 5H11.5L10.5 2H5.5Z" fill="url(#groceries-gradient)"/>
+  <path d="M4.5 5.5L4 13C3.95 13.55 4.4 14 4.95 14H11.05C11.6 14 12.05 13.55 12 13L11.5 5.5H4.5Z" fill="url(#groceries-gradient)"/>
+  <circle cx="6.5" cy="9" r="0.7" fill="#A1A1AA" opacity="0.6"/>
+  <circle cx="9.5" cy="9" r="0.7" fill="#A1A1AA" opacity="0.6"/>
+  <circle cx="8" cy="11" r="0.7" fill="#A1A1AA" opacity="0.6"/>
+  <defs>
+    <linearGradient id="groceries-gradient" x1="4" y1="2" x2="12" y2="14" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#27272A"/>
+    </linearGradient>
+  </defs>
 </svg>

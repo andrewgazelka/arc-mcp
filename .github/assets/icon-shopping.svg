@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-  <path d="M5 1L3 4H13L11 1H5Z" fill="#FF9900"/>
-  <path d="M3 4V13C3 13.55 3.45 14 4 14H12C12.55 14 13 13.55 13 13V4H3ZM11 15H5C5 15.55 5.45 16 6 16H10C10.55 16 11 15.55 11 15Z" fill="#FF9900"/>
+  <path d="M5 1.5L3.5 4H12.5L11 1.5H5Z" fill="url(#shopping-gradient)"/>
+  <path d="M3.5 4.5V13C3.5 13.55 3.95 14 4.5 14H11.5C12.05 14 12.5 13.55 12.5 13V4.5H3.5Z" fill="url(#shopping-gradient)"/>
+  <circle cx="6" cy="15.5" r="0.8" fill="#71717A"/>
+  <circle cx="10" cy="15.5" r="0.8" fill="#71717A"/>
+  <defs>
+    <linearGradient id="shopping-gradient" x1="3.5" y1="1.5" x2="12.5" y2="14" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#52525B"/>
+      <stop offset="1" stop-color="#27272A"/>
+    </linearGradient>
+  </defs>
 </svg>
