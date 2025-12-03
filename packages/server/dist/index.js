@@ -18080,9 +18080,13 @@ async function executeBrowserAction(actionFn, args, tabId) {
   `;
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
   if (!result || result === "missing value") {
-    return { success: false, error: "Could not find element (page may be empty)" };
+    throw new Error("Could not find element (page may be empty)");
   }
-  return result;
+  const actionResult = result;
+  if (!actionResult.success) {
+    throw new Error(actionResult.error || "Action failed");
+  }
+  return actionResult;
 }
 async function click(locator, options = {}) {
   return executeBrowserAction("clickElement", JSON.stringify(locator), options.tab_id);
@@ -18151,17 +18155,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { code } = safeArgs;
     const fn = AsyncFunction("browser", code);
     const result = await fn(dist_exports);
-    if (result && typeof result === "object" && "success" in result && result.success === false) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Action failed: ${result.error || "Unknown error"}`
-          }
-        ],
-        isError: true
-      };
-    }
     const output = result === void 0 ? "undefined" : typeof result === "string" ? result : JSON.stringify(result, null, 2);
     return {
       content: [{ type: "text", text: output }]

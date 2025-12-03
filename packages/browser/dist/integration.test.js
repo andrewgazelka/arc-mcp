@@ -52,10 +52,9 @@ describe("integration tests", () => {
         // Get page structure to verify content loaded
         const structure = await getPageStructure(2);
         console.log("Page structure:", JSON.stringify(structure, null, 2));
-        // Click the "Learn more" link
+        // Click the "Learn more" link (throws on failure)
         const result = await click({ text: "Learn more" });
         console.log("Click result:", JSON.stringify(result, null, 2));
-        expect(result.success).toBe(true);
         // Wait for navigation
         await new Promise((resolve) => setTimeout(resolve, 2000));
         // Verify we navigated to a different page (IANA)

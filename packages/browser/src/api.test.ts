@@ -25,7 +25,7 @@ describe("browser API", () => {
         await click({ role: { role: "button", name: "test" } });
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
 
@@ -34,7 +34,7 @@ describe("browser API", () => {
         await click({ css: "button.test" });
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
 
@@ -43,7 +43,7 @@ describe("browser API", () => {
         await click({ text: "Click me" });
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
   });
@@ -54,7 +54,7 @@ describe("browser API", () => {
         await fill({ label: "Email" }, "test@example.com");
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
 
@@ -63,7 +63,7 @@ describe("browser API", () => {
         await fill({ placeholder: "Enter email" }, "test@example.com");
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
   });
@@ -74,7 +74,7 @@ describe("browser API", () => {
         await type({ css: "input" }, "hello");
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
   });
@@ -85,7 +85,7 @@ describe("browser API", () => {
         await selectOption({ css: "select" }, "option1");
       } catch (e: any) {
         // Expected to fail on about:blank
-        expect(e.message).toContain("Could not find element");
+        expect(e.message).toMatch(/Element not found|Could not find element/);
       }
     });
   });

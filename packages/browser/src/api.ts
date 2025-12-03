@@ -24,10 +24,17 @@ async function executeBrowserAction(
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
   // Handle "missing value" from Chrome on empty tabs
   if (!result || result === 'missing value') {
-    return { success: false, error: 'Could not find element (page may be empty)' };
+    throw new Error('Could not find element (page may be empty)');
   }
   // executeArcJavaScript auto-parses JSON, so result is already an object
-  return result as ActionResult;
+  const actionResult = result as ActionResult;
+
+  // Throw on failure so errors propagate through MCP
+  if (!actionResult.success) {
+    throw new Error(actionResult.error || 'Action failed');
+  }
+
+  return actionResult;
 }
 
 /**

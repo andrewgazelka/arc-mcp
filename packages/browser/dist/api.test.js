@@ -22,7 +22,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
         test("should accept css locator", async () => {
@@ -31,7 +31,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
         test("should accept text locator", async () => {
@@ -40,7 +40,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
     });
@@ -51,7 +51,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
         test("should accept placeholder locator", async () => {
@@ -60,7 +60,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
     });
@@ -71,7 +71,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
     });
@@ -82,7 +82,7 @@ describe("browser API", () => {
             }
             catch (e) {
                 // Expected to fail on about:blank
-                expect(e.message).toContain("Could not find element");
+                expect(e.message).toMatch(/Element not found|Could not find element/);
             }
         });
     });
