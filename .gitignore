@@ -9,6 +9,7 @@ out
 # bundled browser code (generated)
 packages/browser/src/bundle-export.ts
 packages/browser/src/bundle.js
+packages/browser/.build.mjs
 
 # Note: We commit packages/*/dist for bunx compatibility
 

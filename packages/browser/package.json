@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "prebuild": "node src/build.ts",
+    "prebuild": "esbuild src/build.ts --platform=node --format=esm --outfile=.build.mjs && node .build.mjs",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"

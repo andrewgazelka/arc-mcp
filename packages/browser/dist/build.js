@@ -7,7 +7,8 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const browserDir = __dirname;
+// Handle both running from src/ (dev) and from .build.mjs (CI)
+const browserDir = __dirname.endsWith('src') ? __dirname : join(__dirname, 'src');
 const locatorCode = readFileSync(join(browserDir, 'locator.ts'), 'utf-8');
 const actionsCode = readFileSync(join(browserDir, 'actions.ts'), 'utf-8');
 const domtreeCode = readFileSync(join(browserDir, 'domtree.ts'), 'utf-8');
