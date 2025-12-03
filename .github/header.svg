@@ -9,28 +9,43 @@
   <!-- Background -->
   <rect width="800" height="120" fill="#0a0a0a"/>
 
-  <!-- Arc icon (simplified browser window) -->
-  <g transform="translate(40, 35)">
-    <rect x="0" y="0" width="50" height="50" rx="8" fill="url(#grad)" opacity="0.9"/>
-    <circle cx="10" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
-    <circle cx="18" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
-    <circle cx="26" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
-    <rect x="8" y="22" width="34" height="2" rx="1" fill="#0a0a0a" opacity="0.4"/>
-    <rect x="8" y="28" width="28" height="2" rx="1" fill="#0a0a0a" opacity="0.3"/>
-    <rect x="8" y="34" width="32" height="2" rx="1" fill="#0a0a0a" opacity="0.3"/>
+  <!-- Browser window icon -->
+  <g transform="translate(35, 30)">
+    <rect x="0" y="0" width="60" height="60" rx="10" fill="url(#grad)" opacity="0.15"/>
+    <rect x="5" y="5" width="50" height="40" rx="6" fill="url(#grad)" opacity="0.9"/>
+
+    <!-- Window controls -->
+    <circle cx="12" cy="13" r="2" fill="#0a0a0a" opacity="0.5"/>
+    <circle cx="19" cy="13" r="2" fill="#0a0a0a" opacity="0.5"/>
+    <circle cx="26" cy="13" r="2" fill="#0a0a0a" opacity="0.5"/>
+
+    <!-- URL bar -->
+    <rect x="9" y="21" width="38" height="3" rx="1.5" fill="#0a0a0a" opacity="0.3"/>
+
+    <!-- Content -->
+    <rect x="9" y="29" width="32" height="2" rx="1" fill="#0a0a0a" opacity="0.2"/>
+    <rect x="9" y="34" width="28" height="2" rx="1" fill="#0a0a0a" opacity="0.2"/>
+
+    <!-- MCP connection nodes -->
+    <circle cx="30" cy="52" r="3" fill="#ffffff" opacity="0.8"/>
+    <circle cx="22" cy="58" r="2" fill="#ffffff" opacity="0.6"/>
+    <circle cx="38" cy="58" r="2" fill="#ffffff" opacity="0.6"/>
+    <line x1="30" y1="52" x2="22" y2="58" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+    <line x1="30" y1="52" x2="38" y2="58" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
   </g>
 
   <!-- Title -->
-  <text x="110" y="75" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#ffffff" letter-spacing="-1">
+  <text x="120" y="72" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="700" fill="#ffffff" letter-spacing="-0.5">
     Arc MCP
   </text>
 
   <!-- Subtitle -->
-  <text x="112" y="95" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#888888" letter-spacing="0.5">
-    Control Arc browser through Claude
+  <text x="122" y="92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#888888" letter-spacing="1">
+    Browser Control via Model Context Protocol
   </text>
 
-  <!-- Decorative line -->
-  <line x1="720" y1="40" x2="760" y2="80" stroke="url(#grad)" stroke-width="2" opacity="0.5"/>
-  <line x1="760" y1="40" x2="720" y2="80" stroke="url(#grad)" stroke-width="2" opacity="0.5"/>
+  <!-- Decorative elements -->
+  <circle cx="740" cy="60" r="2" fill="url(#grad)" opacity="0.6"/>
+  <circle cx="760" cy="55" r="1.5" fill="url(#grad)" opacity="0.4"/>
+  <circle cx="755" cy="70" r="1" fill="url(#grad)" opacity="0.3"/>
 </svg>

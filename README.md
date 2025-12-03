@@ -47,14 +47,16 @@ Download the latest `.mcpb` from [releases](https://github.com/andrewgazelka/arc
 ## Build
 
 ```bash
-bun install
-bun run build
-bun run pack
+npm install
+npm run build
+npm run pack
 ```
 
 ---
 
 <div align="center">
+
+*Not affiliated with The Browser Company. Arc is a trademark of The Browser Company.*
 
 **MIT** · [Andrew Gazelka](https://github.com/andrewgazelka)
 
