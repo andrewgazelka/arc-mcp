@@ -1,10 +1,16 @@
-# dependencies (bun install)
+# dependencies
 node_modules
 
-# output
+# build output
 out
 dist
+packages/*/dist
 *.tgz
+*.mcpb
+
+# bundled browser code
+packages/browser/src/bundle-export.ts
+packages/browser/src/bundle.js
 
 # code coverage
 coverage

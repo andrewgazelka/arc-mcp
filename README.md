@@ -14,12 +14,39 @@
 
 ## Installation
 
+### Claude Desktop
+
 1. Download the latest `.mcpb` file from [releases](https://github.com/andrewgazelka/arc-mcp/releases)
 2. Open Claude Desktop
 3. Go to **Settings → Extensions**
-4. **Drag and drop** the `.mcpb` file onto the window where it says "Drag .MCPB or .DXT files here to install"
+4. **Drag and drop** the `.mcpb` file onto the window
 
-That's it! The extension will be installed and ready to use.
+### Claude Code
+
+Add to your MCP settings (`~/.config/claude/mcp.json` or similar):
+
+```json
+{
+  "mcpServers": {
+    "arc": {
+      "command": "npx",
+      "args": ["-y", "arc-mcp-server"]
+    }
+  }
+}
+```
+
+Or use the `claude mcp add` command:
+
+```bash
+bunx jsr:@anthropic-ai/claude-mcp add \
+  --scope user \
+  --transport stdio \
+  arc \
+  npx -y arc-mcp-server
+```
+
+Note: Package will be published to npm with first release.
 
 ## Use Cases
 
