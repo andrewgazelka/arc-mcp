@@ -3,14 +3,14 @@ node_modules
 
 # build output
 out
-dist
-packages/*/dist
 *.tgz
 *.mcpb
 
-# bundled browser code
+# bundled browser code (generated)
 packages/browser/src/bundle-export.ts
 packages/browser/src/bundle.js
+
+# Note: We commit packages/*/dist for bunx compatibility
 
 # code coverage
 coverage
