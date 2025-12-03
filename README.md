@@ -5,8 +5,8 @@
 **Control Arc browser through Claude Desktop**
 
 <p>
-<img src="https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/main/assets/claude-logo.png" alt="Claude" height="20" />
-<img src="https://mintlify.s3.us-west-1.amazonaws.com/anthropic/logo/Claude-Code-Logo.svg" alt="Claude Code" height="20" />
+<img src=".github/assets/claude-logo.svg" alt="Claude" height="20" />
+<img src=".github/assets/claude-code-logo.svg" alt="Claude Code" height="20" />
 </p>
 
 [![Build](https://github.com/andrewgazelka/arc-mcp/actions/workflows/build.yml/badge.svg)](https://github.com/andrewgazelka/arc-mcp/actions/workflows/build.yml)
