@@ -14,13 +14,16 @@
   "scripts": {
     "build": "npm run build -w @arc-mcp/applescript && npm run build -w @arc-mcp/browser && npm run build -w arc-mcp-server",
     "typecheck": "npm run typecheck -w @arc-mcp/applescript && npm run typecheck -w @arc-mcp/browser && npm run typecheck -w arc-mcp-server",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "pack": "npm run build && cd packages/server && npx @anthropic-ai/mcpb pack",
-    "ci": "npm run typecheck && npm run build"
+    "ci": "npm run typecheck && npm run build && npm run test"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "esbuild": "^0.27.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.15"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.24.2"
