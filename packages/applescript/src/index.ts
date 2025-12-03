@@ -68,7 +68,8 @@ end tell
 
 /**
  * Parses the result from AppleScript execution.
- * Attempts to parse as JSON, falls back to string.
+ * Arc wraps string results in quotes, so JSON.stringify output appears as "{...}".
+ * We recursively parse to unwrap these layers.
  */
 function parseAppleScriptResult(result: string): any {
   if (!result) return null;
@@ -76,7 +77,17 @@ function parseAppleScriptResult(result: string): any {
   if (result === 'missing value') return null;
 
   try {
-    return JSON.parse(result);
+    const parsed = JSON.parse(result);
+    // If we parsed and got a string that looks like JSON, parse it again
+    // This handles Arc's double-encoding of JSON.stringify results
+    if (typeof parsed === 'string' && (parsed.startsWith('{') || parsed.startsWith('['))) {
+      try {
+        return JSON.parse(parsed);
+      } catch {
+        return parsed;
+      }
+    }
+    return parsed;
   } catch {
     return result;
   }

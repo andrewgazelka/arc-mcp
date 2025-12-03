@@ -26,7 +26,8 @@ async function executeBrowserAction(
   if (!result || result === 'missing value') {
     return { success: false, error: 'Could not find element (page may be empty)' };
   }
-  return JSON.parse(result as string);
+  // executeArcJavaScript auto-parses JSON, so result is already an object
+  return result as ActionResult;
 }
 
 /**
@@ -105,5 +106,6 @@ export async function getPageStructure(
   if (!result || result === 'missing value') {
     return null;
   }
-  return JSON.parse(result as string);
+  // executeArcJavaScript auto-parses JSON, so result is already an object
+  return result;
 }

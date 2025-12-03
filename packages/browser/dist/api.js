@@ -17,7 +17,8 @@ async function executeBrowserAction(actionFn, args, tabId) {
     if (!result || result === 'missing value') {
         return { success: false, error: 'Could not find element (page may be empty)' };
     }
-    return JSON.parse(result);
+    // executeArcJavaScript auto-parses JSON, so result is already an object
+    return result;
 }
 /**
  * Click an element using semantic locators
@@ -56,6 +57,7 @@ export async function getPageStructure(maxDepth = 10, tabId) {
     if (!result || result === 'missing value') {
         return null;
     }
-    return JSON.parse(result);
+    // executeArcJavaScript auto-parses JSON, so result is already an object
+    return result;
 }
 //# sourceMappingURL=api.js.map

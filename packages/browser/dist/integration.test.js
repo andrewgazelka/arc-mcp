@@ -41,5 +41,26 @@ describe("integration tests", () => {
         expect(tab.title).toContain("Example");
         expect(tab.url).toContain("example.com");
     });
+    test("should click a link and navigate to new page", async () => {
+        // Open example.com which has a "Learn more" link
+        await openUrl("https://www.example.com", true);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        // Verify we're on example.com
+        let tab = await getCurrentTab();
+        console.log("Current tab before click:", JSON.stringify(tab, null, 2));
+        expect(tab.url).toContain("example.com");
+        // Get page structure to verify content loaded
+        const structure = await getPageStructure(2);
+        console.log("Page structure:", JSON.stringify(structure, null, 2));
+        // Click the "Learn more" link
+        const result = await click({ text: "Learn more" });
+        console.log("Click result:", JSON.stringify(result, null, 2));
+        expect(result.success).toBe(true);
+        // Wait for navigation
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Verify we navigated to a different page (IANA)
+        tab = await getCurrentTab();
+        expect(tab.url).toContain("iana.org");
+    });
 });
 //# sourceMappingURL=integration.test.js.map

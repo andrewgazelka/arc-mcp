@@ -28,10 +28,18 @@ const bundle = `
 
   ${domtreeCode}
 
-  // Return results as JSON
-  window.__arcMCPResult = function(result) {
-    return JSON.stringify(result);
-  };
+  // Expose functions to global scope for API calls
+  window.findElement = findElement;
+  window.findByRole = findByRole;
+  window.findByLabel = findByLabel;
+  window.findByText = findByText;
+  window.findByPlaceholder = findByPlaceholder;
+  window.findByTestId = findByTestId;
+  window.clickElement = clickElement;
+  window.fillElement = fillElement;
+  window.typeElement = typeElement;
+  window.selectOption = selectOption;
+  window.getPageStructure = getPageStructure;
 })();
 `.trim();
 
