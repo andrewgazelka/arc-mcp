@@ -23,30 +23,26 @@
 
 ### Claude Code
 
-Add to your MCP settings (`~/.config/claude/mcp.json` or similar):
+```bash
+claude mcp add \
+  --scope user \
+  --transport stdio \
+  arc \
+  bunx "github:andrewgazelka/arc-mcp#packages/server"
+```
+
+Or manually add to your MCP settings:
 
 ```json
 {
   "mcpServers": {
     "arc": {
-      "command": "npx",
-      "args": ["-y", "arc-mcp-server"]
+      "command": "bunx",
+      "args": ["github:andrewgazelka/arc-mcp#packages/server"]
     }
   }
 }
 ```
-
-Or use the `claude mcp add` command:
-
-```bash
-bunx jsr:@anthropic-ai/claude-mcp add \
-  --scope user \
-  --transport stdio \
-  arc \
-  npx -y arc-mcp-server
-```
-
-Note: Package will be published to npm with first release.
 
 ## Use Cases
 
