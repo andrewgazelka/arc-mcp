@@ -2,51 +2,31 @@
 
 /**
  * Build script to bundle browser code into a single injectable string
+ * Simply concatenates JS files - no TypeScript compilation needed
  */
 
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import ts from 'typescript';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // Handle both running from src/ (dev) and from .build.mjs (CI)
 const browserDir = __dirname.endsWith('src') ? __dirname : join(__dirname, 'src');
 
-const locatorCode = readFileSync(join(browserDir, 'locator.ts'), 'utf-8');
-const actionsCode = readFileSync(join(browserDir, 'actions.ts'), 'utf-8');
-const domtreeCode = readFileSync(join(browserDir, 'domtree.ts'), 'utf-8');
-
-/**
- * Strip TypeScript types using the TypeScript compiler API
- */
-function stripTypes(code: string): string {
-  const result = ts.transpileModule(code, {
-    compilerOptions: {
-      target: ts.ScriptTarget.ES2020,
-      module: ts.ModuleKind.None, // No module system - functions stay at top level
-      removeComments: true,
-    },
-  });
-
-  return result.outputText;
-}
-
-// Combine all code into a single module context
-const combinedCode = `
-${locatorCode}
-
-${actionsCode}
-
-${domtreeCode}
-`;
+const locatorCode = readFileSync(join(browserDir, 'locator.js'), 'utf-8');
+const actionsCode = readFileSync(join(browserDir, 'actions.js'), 'utf-8');
+const domtreeCode = readFileSync(join(browserDir, 'domtree.js'), 'utf-8');
 
 const bundle = `
 (function() {
   'use strict';
 
-  ${stripTypes(combinedCode)}
+  ${locatorCode}
+
+  ${actionsCode}
+
+  ${domtreeCode}
 
   // Return results as JSON
   window.__arcMCPResult = function(result) {

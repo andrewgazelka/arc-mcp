@@ -1,15 +1,17 @@
 /**
  * Navigation and tab management functions
  * These use pure AppleScript (not browser JavaScript)
+ * Supports Arc (default) and Google Chrome via BROWSER env var
  */
-import { executeAppleScript } from './applescript.js';
+import { executeAppleScript, getBrowserApp } from './applescript.js';
 /**
- * Open a URL in Arc browser
+ * Open a URL in the browser
  */
 export async function openUrl(url, newTab = true) {
+    const browserApp = getBrowserApp();
     const script = newTab
-        ? `tell application "Arc" to tell front window to make new tab with properties {URL:"${url}"}`
-        : `tell application "Arc" to open location "${url}"`;
+        ? `tell application "${browserApp}" to tell front window to make new tab with properties {URL:"${url}"}`
+        : `tell application "${browserApp}" to open location "${url}"`;
     executeAppleScript(script);
     return { success: true };
 }
@@ -17,8 +19,9 @@ export async function openUrl(url, newTab = true) {
  * Get information about the current active tab
  */
 export async function getCurrentTab() {
+    const browserApp = getBrowserApp();
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         return (title of active tab) & "|" & (URL of active tab)
       end tell
@@ -32,8 +35,9 @@ export async function getCurrentTab() {
  * List all open tabs
  */
 export async function listTabs() {
+    const browserApp = getBrowserApp();
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set tabList to {}
         set tabIndex to 1
@@ -60,8 +64,9 @@ export async function listTabs() {
  * Close a specific tab by index (1-based)
  */
 export async function closeTab(tabId) {
+    const browserApp = getBrowserApp();
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         close tab ${tabId}
       end tell
@@ -73,8 +78,9 @@ export async function closeTab(tabId) {
  * Switch to a specific tab by index (1-based)
  */
 export async function switchToTab(tabId) {
+    const browserApp = getBrowserApp();
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set active tab to tab ${tabId}
       end tell
@@ -86,18 +92,20 @@ export async function switchToTab(tabId) {
  * Reload a tab by index (1-based), or current tab if not specified
  */
 export async function reloadTab(tabId) {
+    const browserApp = getBrowserApp();
     const script = tabId
-        ? `tell application "Arc" to tell front window to reload tab ${tabId}`
-        : `tell application "Arc" to tell front window to reload active tab`;
+        ? `tell application "${browserApp}" to tell front window to reload tab ${tabId}`
+        : `tell application "${browserApp}" to tell front window to reload active tab`;
     executeAppleScript(script);
 }
 /**
  * Navigate back in browser history
  */
 export async function goBack(tabId) {
+    const browserApp = getBrowserApp();
     const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.back()"
@@ -111,9 +119,10 @@ export async function goBack(tabId) {
  * Navigate forward in browser history
  */
 export async function goForward(tabId) {
+    const browserApp = getBrowserApp();
     const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.forward()"
@@ -127,10 +136,11 @@ export async function goForward(tabId) {
  * Execute arbitrary JavaScript in a tab by index (1-based), or current tab if not specified
  */
 export async function executeJavaScript(code, tabId) {
+    const browserApp = getBrowserApp();
     const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
     const base64Code = Buffer.from(code).toString('base64');
     const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "eval(atob('${base64Code}'))"
@@ -146,18 +156,6 @@ export async function executeJavaScript(code, tabId) {
         return result;
     }
 }
-/**
- * Check if Arc is running
- */
-export function ensureArcRunning() {
-    const script = `
-    tell application "System Events"
-      return (name of processes) contains "Arc"
-    end tell
-  `;
-    const isRunning = executeAppleScript(script);
-    if (isRunning !== 'true') {
-        throw new Error('Arc browser is not running');
-    }
-}
+// Re-export for compatibility
+export { ensureBrowserRunning as ensureArcRunning } from './applescript.js';
 //# sourceMappingURL=navigation.js.map

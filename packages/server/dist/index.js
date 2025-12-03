@@ -17845,7 +17845,7 @@ var dist_exports = {};
 __export(dist_exports, {
   click: () => click,
   closeTab: () => closeTab,
-  ensureArcRunning: () => ensureArcRunning,
+  ensureArcRunning: () => ensureBrowserRunning,
   executeArcJavaScript: () => executeArcJavaScript,
   executeJavaScript: () => executeJavaScript,
   fill: () => fill,
@@ -17863,12 +17863,20 @@ __export(dist_exports, {
 
 // ../applescript/dist/index.js
 import { execSync } from "child_process";
+function getBrowserApp() {
+  const browser = process.env.BROWSER?.toLowerCase();
+  if (browser === "chrome") {
+    return "Google Chrome";
+  }
+  return "Arc";
+}
 function executeArcJavaScript(code, options = {}) {
   const { tabId } = options;
+  const browserApp = getBrowserApp();
   const encodedCode = Buffer.from(code).toString("base64");
   const tabSelector = tabId ? `tab id ${tabId}` : "active tab";
   const appleScript = `
-tell application "Arc"
+tell application "${browserApp}"
   tell front window
     tell ${tabSelector}
       execute javascript "eval(atob('${encodedCode}'))"
@@ -17882,11 +17890,13 @@ end tell
     });
     return parseAppleScriptResult(result.trim());
   } catch (error2) {
-    throw new Error(`Failed to execute Arc JavaScript: ${error2.message}`);
+    throw new Error(`Failed to execute ${browserApp} JavaScript: ${error2.message}`);
   }
 }
 function parseAppleScriptResult(result) {
   if (!result)
+    return null;
+  if (result === "missing value")
     return null;
   try {
     return JSON.parse(result);
@@ -17897,6 +17907,13 @@ function parseAppleScriptResult(result) {
 
 // ../browser/dist/applescript.js
 import { execSync as execSync2 } from "child_process";
+function getBrowserApp2() {
+  const browser = process.env.BROWSER?.toLowerCase();
+  if (browser === "chrome") {
+    return "Google Chrome";
+  }
+  return "Arc";
+}
 function executeAppleScript(script) {
   try {
     const result = execSync2(`osascript -e '${script.replace(/'/g, "'\\''")}'`, {
@@ -17908,16 +17925,31 @@ function executeAppleScript(script) {
     throw new Error(`AppleScript execution failed: ${err.message}`);
   }
 }
+function ensureBrowserRunning() {
+  const browserApp = getBrowserApp2();
+  const processName = browserApp === "Google Chrome" ? "Google Chrome" : "Arc";
+  const script = `
+    tell application "System Events"
+      return (name of processes) contains "${processName}"
+    end tell
+  `;
+  const isRunning = executeAppleScript(script);
+  if (isRunning !== "true") {
+    throw new Error(`${browserApp} browser is not running`);
+  }
+}
 
 // ../browser/dist/navigation.js
 async function openUrl(url, newTab = true) {
-  const script = newTab ? `tell application "Arc" to tell front window to make new tab with properties {URL:"${url}"}` : `tell application "Arc" to open location "${url}"`;
+  const browserApp = getBrowserApp2();
+  const script = newTab ? `tell application "${browserApp}" to tell front window to make new tab with properties {URL:"${url}"}` : `tell application "${browserApp}" to open location "${url}"`;
   executeAppleScript(script);
   return { success: true };
 }
 async function getCurrentTab() {
+  const browserApp = getBrowserApp2();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         return (title of active tab) & "|" & (URL of active tab)
       end tell
@@ -17928,8 +17960,9 @@ async function getCurrentTab() {
   return { title, url };
 }
 async function listTabs() {
+  const browserApp = getBrowserApp2();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set tabList to {}
         set tabIndex to 1
@@ -17953,8 +17986,9 @@ async function listTabs() {
   });
 }
 async function closeTab(tabId) {
+  const browserApp = getBrowserApp2();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         close tab ${tabId}
       end tell
@@ -17963,8 +17997,9 @@ async function closeTab(tabId) {
   executeAppleScript(script);
 }
 async function switchToTab(tabId) {
+  const browserApp = getBrowserApp2();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set active tab to tab ${tabId}
       end tell
@@ -17973,13 +18008,15 @@ async function switchToTab(tabId) {
   executeAppleScript(script);
 }
 async function reloadTab(tabId) {
-  const script = tabId ? `tell application "Arc" to tell front window to reload tab ${tabId}` : `tell application "Arc" to tell front window to reload active tab`;
+  const browserApp = getBrowserApp2();
+  const script = tabId ? `tell application "${browserApp}" to tell front window to reload tab ${tabId}` : `tell application "${browserApp}" to tell front window to reload active tab`;
   executeAppleScript(script);
 }
 async function goBack(tabId) {
+  const browserApp = getBrowserApp2();
   const tabSelector = tabId ? `tab ${tabId}` : "active tab";
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.back()"
@@ -17990,9 +18027,10 @@ async function goBack(tabId) {
   executeAppleScript(script);
 }
 async function goForward(tabId) {
+  const browserApp = getBrowserApp2();
   const tabSelector = tabId ? `tab ${tabId}` : "active tab";
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.forward()"
@@ -18003,10 +18041,11 @@ async function goForward(tabId) {
   executeAppleScript(script);
 }
 async function executeJavaScript(code, tabId) {
+  const browserApp = getBrowserApp2();
   const tabSelector = tabId ? `tab ${tabId}` : "active tab";
   const base64Code = Buffer.from(code).toString("base64");
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "eval(atob('${base64Code}'))"
@@ -18021,20 +18060,9 @@ async function executeJavaScript(code, tabId) {
     return result;
   }
 }
-function ensureArcRunning() {
-  const script = `
-    tell application "System Events"
-      return (name of processes) contains "Arc"
-    end tell
-  `;
-  const isRunning = executeAppleScript(script);
-  if (isRunning !== "true") {
-    throw new Error("Arc browser is not running");
-  }
-}
 
 // ../browser/dist/bundle-export.js
-var BROWSER_BUNDLE = "(function() {\n  'use strict';\n\n  function findByRole(role, name) {\n    const candidates = [];\n    const explicitRoles = document.querySelectorAll(`[role=\"${role}\"]`);\n    candidates.push(...Array.from(explicitRoles));\n    const implicitMap = {\n        button: 'BUTTON, [type=\"button\"], [type=\"submit\"]',\n        link: 'A[href]',\n        textbox: 'INPUT[type=\"text\"], INPUT:not([type]), TEXTAREA',\n        searchbox: 'INPUT[type=\"search\"]',\n        combobox: 'SELECT',\n        checkbox: 'INPUT[type=\"checkbox\"]',\n        radio: 'INPUT[type=\"radio\"]',\n        tab: '',\n        menuitem: '',\n        option: 'OPTION',\n    };\n    if (implicitMap[role]) {\n        const implicitElements = document.querySelectorAll(implicitMap[role]);\n        candidates.push(...Array.from(implicitElements));\n    }\n    if (!name) {\n        return candidates[0] || null;\n    }\n    for (const el of candidates) {\n        const ariaLabel = el.getAttribute('aria-label');\n        const ariaLabelledBy = el.getAttribute('aria-labelledby');\n        const textContent = el.textContent?.trim();\n        if (ariaLabel === name || textContent === name) {\n            return el;\n        }\n        if (ariaLabelledBy) {\n            const labelEl = document.getElementById(ariaLabelledBy);\n            if (labelEl && labelEl.textContent?.trim() === name) {\n                return el;\n            }\n        }\n    }\n    return null;\n}\nfunction findByLabel(labelText) {\n    const labels = Array.from(document.querySelectorAll('label'));\n    for (const label of labels) {\n        if (label.textContent?.includes(labelText)) {\n            if (label.htmlFor) {\n                return document.getElementById(label.htmlFor);\n            }\n            const nested = label.querySelector('input, select, textarea');\n            if (nested) {\n                return nested;\n            }\n        }\n    }\n    return null;\n}\nfunction findByText(text, exact = false) {\n    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);\n    const matches = [];\n    let node;\n    while ((node = walker.nextNode())) {\n        const content = node.textContent?.trim() || '';\n        const isMatch = exact ? content === text : content.includes(text);\n        if (isMatch && node.parentElement) {\n            matches.push(node.parentElement);\n        }\n    }\n    const interactive = matches.find((el) => ['A', 'BUTTON', 'INPUT', 'SELECT'].includes(el.tagName));\n    return interactive || matches[0] || null;\n}\nfunction findByPlaceholder(placeholder) {\n    return document.querySelector(`[placeholder=\"${placeholder}\"]`);\n}\nfunction findByTestId(testId) {\n    return document.querySelector(`[data-testid=\"${testId}\"]`);\n}\nfunction findElement(locator) {\n    if ('role' in locator) {\n        return findByRole(locator.role.role, locator.role.name);\n    }\n    if ('label' in locator) {\n        return findByLabel(locator.label);\n    }\n    if ('text' in locator) {\n        return findByText(locator.text, locator.exact);\n    }\n    if ('placeholder' in locator) {\n        return findByPlaceholder(locator.placeholder);\n    }\n    if ('testId' in locator) {\n        return findByTestId(locator.testId);\n    }\n    if ('css' in locator) {\n        return document.querySelector(locator.css);\n    }\n    return null;\n}\nfunction describeElement(el) {\n    const tag = el.tagName.toLowerCase();\n    const id = el.id ? `#${el.id}` : '';\n    const text = el.textContent?.substring(0, 30).trim() || '';\n    const ariaLabel = el.getAttribute('aria-label');\n    if (ariaLabel) {\n        return `<${tag}${id} aria-label=\"${ariaLabel}\">`;\n    }\n    if (text) {\n        return `<${tag}${id}>${text}`;\n    }\n    return `<${tag}${id}>`;\n}\nfunction clickElement(locator) {\n    const element = findElement(locator);\n    if (!element) {\n        return {\n            success: false,\n            error: `Element not found: ${JSON.stringify(locator)}`,\n        };\n    }\n    element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));\n    element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));\n    element.click();\n    return {\n        success: true,\n        element: describeElement(element),\n    };\n}\nfunction fillElement(locator, value) {\n    const element = findElement(locator);\n    if (!element) {\n        return {\n            success: false,\n            error: `Element not found: ${JSON.stringify(locator)}`,\n        };\n    }\n    if (!['INPUT', 'TEXTAREA'].includes(element.tagName)) {\n        return {\n            success: false,\n            error: `Element is not an input or textarea: ${element.tagName}`,\n        };\n    }\n    const input = element;\n    input.value = '';\n    input.value = value;\n    input.dispatchEvent(new Event('input', { bubbles: true }));\n    input.dispatchEvent(new Event('change', { bubbles: true }));\n    return {\n        success: true,\n        element: describeElement(element),\n    };\n}\nfunction typeElement(locator, text) {\n    const element = findElement(locator);\n    if (!element) {\n        return {\n            success: false,\n            error: `Element not found: ${JSON.stringify(locator)}`,\n        };\n    }\n    if (!['INPUT', 'TEXTAREA'].includes(element.tagName)) {\n        return {\n            success: false,\n            error: `Element is not an input or textarea: ${element.tagName}`,\n        };\n    }\n    const input = element;\n    input.focus();\n    for (const char of text) {\n        input.value += char;\n        input.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true }));\n        input.dispatchEvent(new KeyboardEvent('keypress', { key: char, bubbles: true }));\n        input.dispatchEvent(new Event('input', { bubbles: true }));\n        input.dispatchEvent(new KeyboardEvent('keyup', { key: char, bubbles: true }));\n    }\n    return {\n        success: true,\n        element: describeElement(element),\n    };\n}\nfunction selectOption(locator, option) {\n    const element = findElement(locator);\n    if (!element) {\n        return {\n            success: false,\n            error: `Element not found: ${JSON.stringify(locator)}`,\n        };\n    }\n    if (element.tagName !== 'SELECT') {\n        return {\n            success: false,\n            error: `Element is not a select: ${element.tagName}`,\n        };\n    }\n    const select = element;\n    const options = Array.from(select.options);\n    const optionEl = options.find((o) => o.text === option || o.value === option);\n    if (!optionEl) {\n        const available = options.map((o) => o.text).join(', ');\n        return {\n            success: false,\n            error: `Option not found: \"${option}\". Available: ${available}`,\n        };\n    }\n    select.value = optionEl.value;\n    select.dispatchEvent(new Event('change', { bubbles: true }));\n    return {\n        success: true,\n        element: describeElement(element),\n    };\n}\nlet nodeIdCounter = 0;\nfunction getSemanticType(el) {\n    const tag = el.tagName.toLowerCase();\n    const role = el.getAttribute('role');\n    if (role) {\n        return role;\n    }\n    const typeMap = {\n        nav: 'navigation',\n        header: 'header',\n        footer: 'footer',\n        main: 'main',\n        aside: 'aside',\n        section: 'section',\n        article: 'article',\n        form: 'form',\n        button: 'button',\n        a: 'link',\n        input: getInputType(el),\n        select: 'select',\n        textarea: 'textbox',\n        h1: 'heading',\n        h2: 'heading',\n        h3: 'heading',\n        h4: 'heading',\n        h5: 'heading',\n        h6: 'heading',\n        ul: 'list',\n        ol: 'list',\n        li: 'listitem',\n        img: 'image',\n        dialog: 'dialog',\n    };\n    return typeMap[tag] || tag;\n}\nfunction getInputType(input) {\n    const type = input.type || 'text';\n    const typeMap = {\n        text: 'textbox',\n        search: 'searchbox',\n        email: 'textbox',\n        password: 'textbox',\n        tel: 'textbox',\n        url: 'textbox',\n        number: 'textbox',\n        date: 'datepicker',\n        time: 'timepicker',\n        datetime: 'datepicker',\n        'datetime-local': 'datepicker',\n        month: 'datepicker',\n        week: 'datepicker',\n        checkbox: 'checkbox',\n        radio: 'radio',\n        button: 'button',\n        submit: 'button',\n        reset: 'button',\n    };\n    return typeMap[type] || 'textbox';\n}\nfunction isInteractive(el) {\n    const tag = el.tagName.toLowerCase();\n    const interactiveTags = ['a', 'button', 'input', 'select', 'textarea', 'label'];\n    if (interactiveTags.includes(tag)) {\n        return true;\n    }\n    const role = el.getAttribute('role');\n    const interactiveRoles = [\n        'button',\n        'link',\n        'tab',\n        'menuitem',\n        'option',\n        'checkbox',\n        'radio',\n        'textbox',\n        'searchbox',\n        'combobox',\n    ];\n    if (role && interactiveRoles.includes(role)) {\n        return true;\n    }\n    if (el.getAttribute('onclick') || el.getAttribute('ng-click')) {\n        return true;\n    }\n    return false;\n}\nfunction getElementLabel(el) {\n    const ariaLabel = el.getAttribute('aria-label');\n    if (ariaLabel) {\n        return ariaLabel;\n    }\n    const ariaLabelledBy = el.getAttribute('aria-labelledby');\n    if (ariaLabelledBy) {\n        const labelEl = document.getElementById(ariaLabelledBy);\n        if (labelEl) {\n            return labelEl.textContent?.trim();\n        }\n    }\n    if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {\n        const id = el.id;\n        if (id) {\n            const label = document.querySelector(`label[for=\"${id}\"]`);\n            if (label) {\n                return label.textContent?.trim();\n            }\n        }\n        const parentLabel = el.closest('label');\n        if (parentLabel) {\n            const clone = parentLabel.cloneNode(true);\n            const input = clone.querySelector('input, select, textarea');\n            if (input) {\n                input.remove();\n            }\n            return clone.textContent?.trim();\n        }\n    }\n    if (el.tagName === 'LABEL') {\n        return el.textContent?.trim();\n    }\n    return undefined;\n}\nfunction getVisibleText(el) {\n    const clone = el.cloneNode(true);\n    const toRemove = clone.querySelectorAll('script, style, [hidden]');\n    toRemove.forEach((n) => n.remove());\n    const text = clone.textContent?.trim();\n    if (!text) {\n        return undefined;\n    }\n    return text.length > 50 ? text.substring(0, 50) : text;\n}\nfunction buildNode(el, depth, maxDepth) {\n    if (depth > maxDepth) {\n        return null;\n    }\n    const type = getSemanticType(el);\n    const interactive = isInteractive(el);\n    const node = { type };\n    if (interactive) {\n        node.id = ++nodeIdCounter;\n    }\n    const label = getElementLabel(el);\n    if (label) {\n        node.label = label;\n    }\n    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {\n        const input = el;\n        if (input.value) {\n            node.value = input.value;\n        }\n        if (input.placeholder) {\n            node.placeholder = input.placeholder;\n        }\n    }\n    if (el.tagName === 'SELECT') {\n        const select = el;\n        const selected = select.options[select.selectedIndex];\n        if (selected) {\n            node.value = selected.text;\n        }\n    }\n    if (el.tagName === 'A') {\n        const anchor = el;\n        if (anchor.href) {\n            node.href = anchor.href;\n        }\n    }\n    if (el.tagName === 'BUTTON') {\n        const button = el;\n        if (button.type === 'submit' || button.classList.contains('primary')) {\n            node.primary = true;\n        }\n    }\n    if (el.classList.contains('active') || el.getAttribute('aria-current') === 'page') {\n        node.active = true;\n    }\n    const children = [];\n    for (const child of Array.from(el.children)) {\n        const childNode = buildNode(child, depth + 1, maxDepth);\n        if (childNode) {\n            children.push(childNode);\n        }\n    }\n    if (children.length > 0) {\n        node.children = children;\n    }\n    else {\n        const text = getVisibleText(el);\n        if (text) {\n            if (type === 'text' || type === 'p' || type === 'span' || type === 'div') {\n                node.content = text;\n            }\n            else {\n                node.text = text;\n            }\n        }\n    }\n    if (!interactive && children.length === 0 && !node.text && !node.content && depth > 0) {\n        return null;\n    }\n    return node;\n}\nfunction getPageStructure(maxDepth = 10) {\n    nodeIdCounter = 0;\n    const tree = buildNode(document.body, 0, maxDepth);\n    return {\n        page: document.title,\n        url: window.location.href,\n        tree: tree,\n    };\n}\n\n\n  // Return results as JSON\n  window.__arcMCPResult = function(result) {\n    return JSON.stringify(result);\n  };\n})();";
+var BROWSER_BUNDLE = "(function() {\n  'use strict';\n\n  /**\n * Browser-side semantic locator engine\n * This code gets injected into Arc browser and executed\n */\n\n/**\n * Find element by ARIA role (explicit or implicit)\n */\nfunction findByRole(role, name) {\n  const candidates = [];\n\n  // Add explicit role attributes\n  const explicitRoles = document.querySelectorAll(`[role=\"${role}\"]`);\n  candidates.push(...Array.from(explicitRoles));\n\n  // Add implicit HTML elements that map to this role\n  const implicitMap = {\n    button: 'BUTTON, [type=\"button\"], [type=\"submit\"]',\n    link: 'A[href]',\n    textbox: 'INPUT[type=\"text\"], INPUT:not([type]), TEXTAREA',\n    searchbox: 'INPUT[type=\"search\"]',\n    combobox: 'SELECT',\n    checkbox: 'INPUT[type=\"checkbox\"]',\n    radio: 'INPUT[type=\"radio\"]',\n    tab: '',\n    menuitem: '',\n    option: 'OPTION',\n  };\n\n  if (implicitMap[role]) {\n    const implicitElements = document.querySelectorAll(implicitMap[role]);\n    candidates.push(...Array.from(implicitElements));\n  }\n\n  if (!name) {\n    return candidates[0] || null;\n  }\n\n  // Filter by accessible name\n  for (const el of candidates) {\n    const ariaLabel = el.getAttribute('aria-label');\n    const ariaLabelledBy = el.getAttribute('aria-labelledby');\n    const textContent = el.textContent?.trim();\n\n    if (ariaLabel === name || textContent === name) {\n      return el;\n    }\n\n    if (ariaLabelledBy) {\n      const labelEl = document.getElementById(ariaLabelledBy);\n      if (labelEl && labelEl.textContent?.trim() === name) {\n        return el;\n      }\n    }\n  }\n\n  return null;\n}\n\n/**\n * Find input by associated label text\n */\nfunction findByLabel(labelText) {\n  const labels = Array.from(document.querySelectorAll('label'));\n\n  for (const label of labels) {\n    if (label.textContent?.includes(labelText)) {\n      // Check for explicit 'for' attribute\n      if (label.htmlFor) {\n        return document.getElementById(label.htmlFor);\n      }\n\n      // Check for nested input\n      const nested = label.querySelector('input, select, textarea');\n      if (nested) {\n        return nested;\n      }\n    }\n  }\n\n  return null;\n}\n\n/**\n * Find element by visible text content\n */\nfunction findByText(text, exact = false) {\n  const walker = document.createTreeWalker(\n    document.body,\n    NodeFilter.SHOW_TEXT,\n    null\n  );\n\n  const matches = [];\n  let node;\n\n  while ((node = walker.nextNode())) {\n    const content = node.textContent?.trim() || '';\n    const isMatch = exact ? content === text : content.includes(text);\n\n    if (isMatch && node.parentElement) {\n      matches.push(node.parentElement);\n    }\n  }\n\n  // Prefer interactive elements\n  const interactive = matches.find((el) =>\n    ['A', 'BUTTON', 'INPUT', 'SELECT'].includes(el.tagName)\n  );\n\n  return interactive || matches[0] || null;\n}\n\n/**\n * Find input by placeholder attribute\n */\nfunction findByPlaceholder(placeholder) {\n  return document.querySelector(`[placeholder=\"${placeholder}\"]`);\n}\n\n/**\n * Find element by data-testid attribute\n */\nfunction findByTestId(testId) {\n  return document.querySelector(`[data-testid=\"${testId}\"]`);\n}\n\n/**\n * Main locator dispatcher\n */\nfunction findElement(locator) {\n  if ('role' in locator) {\n    return findByRole(locator.role.role, locator.role.name);\n  }\n  if ('label' in locator) {\n    return findByLabel(locator.label);\n  }\n  if ('text' in locator) {\n    return findByText(locator.text, locator.exact);\n  }\n  if ('placeholder' in locator) {\n    return findByPlaceholder(locator.placeholder);\n  }\n  if ('testId' in locator) {\n    return findByTestId(locator.testId);\n  }\n  if ('css' in locator) {\n    return document.querySelector(locator.css);\n  }\n  return null;\n}\n\n\n  /**\n * Browser-side actions for interacting with elements\n * This code gets injected into Arc browser and executed\n */\n\n/**\n * Describe an element for user feedback\n */\nfunction describeElement(el) {\n  const tag = el.tagName.toLowerCase();\n  const id = el.id ? `#${el.id}` : '';\n  const text = el.textContent?.substring(0, 30).trim() || '';\n  const ariaLabel = el.getAttribute('aria-label');\n\n  if (ariaLabel) {\n    return `<${tag}${id} aria-label=\"${ariaLabel}\">`;\n  }\n  if (text) {\n    return `<${tag}${id}>${text}`;\n  }\n  return `<${tag}${id}>`;\n}\n\n/**\n * Click an element\n */\nfunction clickElement(locator) {\n  const element = findElement(locator);\n\n  if (!element) {\n    return {\n      success: false,\n      error: `Element not found: ${JSON.stringify(locator)}`,\n    };\n  }\n\n  // Dispatch proper mouse events\n  element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));\n  element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));\n  element.click();\n\n  return {\n    success: true,\n    element: describeElement(element),\n  };\n}\n\n/**\n * Fill an input with a value (fast, replaces entire value)\n */\nfunction fillElement(locator, value) {\n  const element = findElement(locator);\n\n  if (!element) {\n    return {\n      success: false,\n      error: `Element not found: ${JSON.stringify(locator)}`,\n    };\n  }\n\n  if (!['INPUT', 'TEXTAREA'].includes(element.tagName)) {\n    return {\n      success: false,\n      error: `Element is not an input or textarea: ${element.tagName}`,\n    };\n  }\n\n  const input = element;\n\n  // Clear and set value\n  input.value = '';\n  input.value = value;\n\n  // Dispatch events\n  input.dispatchEvent(new Event('input', { bubbles: true }));\n  input.dispatchEvent(new Event('change', { bubbles: true }));\n\n  return {\n    success: true,\n    element: describeElement(element),\n  };\n}\n\n/**\n * Type text character by character (triggers autocomplete)\n */\nfunction typeElement(locator, text) {\n  const element = findElement(locator);\n\n  if (!element) {\n    return {\n      success: false,\n      error: `Element not found: ${JSON.stringify(locator)}`,\n    };\n  }\n\n  if (!['INPUT', 'TEXTAREA'].includes(element.tagName)) {\n    return {\n      success: false,\n      error: `Element is not an input or textarea: ${element.tagName}`,\n    };\n  }\n\n  const input = element;\n  input.focus();\n\n  // Type character by character\n  for (const char of text) {\n    input.value += char;\n    input.dispatchEvent(new KeyboardEvent('keydown', { key: char, bubbles: true }));\n    input.dispatchEvent(new KeyboardEvent('keypress', { key: char, bubbles: true }));\n    input.dispatchEvent(new Event('input', { bubbles: true }));\n    input.dispatchEvent(new KeyboardEvent('keyup', { key: char, bubbles: true }));\n  }\n\n  return {\n    success: true,\n    element: describeElement(element),\n  };\n}\n\n/**\n * Select an option from a dropdown\n */\nfunction selectOption(locator, option) {\n  const element = findElement(locator);\n\n  if (!element) {\n    return {\n      success: false,\n      error: `Element not found: ${JSON.stringify(locator)}`,\n    };\n  }\n\n  if (element.tagName !== 'SELECT') {\n    return {\n      success: false,\n      error: `Element is not a select: ${element.tagName}`,\n    };\n  }\n\n  const select = element;\n  const options = Array.from(select.options);\n\n  // Find option by text or value\n  const optionEl = options.find(\n    (o) => o.text === option || o.value === option\n  );\n\n  if (!optionEl) {\n    const available = options.map((o) => o.text).join(', ');\n    return {\n      success: false,\n      error: `Option not found: \"${option}\". Available: ${available}`,\n    };\n  }\n\n  select.value = optionEl.value;\n  select.dispatchEvent(new Event('change', { bubbles: true }));\n\n  return {\n    success: true,\n    element: describeElement(element),\n  };\n}\n\n\n  /**\n * Build a proper tree-based DOM structure matching the user's format\n */\n\nlet nodeIdCounter = 0;\n\n/**\n * Map HTML element to semantic type\n */\nfunction getSemanticType(el) {\n  const tag = el.tagName.toLowerCase();\n  const role = el.getAttribute('role');\n\n  // Explicit roles take precedence\n  if (role) {\n    return role;\n  }\n\n  // Map common HTML elements to semantic types\n  const typeMap = {\n    nav: 'navigation',\n    header: 'header',\n    footer: 'footer',\n    main: 'main',\n    aside: 'aside',\n    section: 'section',\n    article: 'article',\n    form: 'form',\n    button: 'button',\n    a: 'link',\n    input: getInputType(el),\n    select: 'select',\n    textarea: 'textbox',\n    h1: 'heading',\n    h2: 'heading',\n    h3: 'heading',\n    h4: 'heading',\n    h5: 'heading',\n    h6: 'heading',\n    ul: 'list',\n    ol: 'list',\n    li: 'listitem',\n    img: 'image',\n    dialog: 'dialog',\n  };\n\n  return typeMap[tag] || tag;\n}\n\n/**\n * Get specific input type\n */\nfunction getInputType(input) {\n  const type = input.type || 'text';\n  const typeMap = {\n    text: 'textbox',\n    search: 'searchbox',\n    email: 'textbox',\n    password: 'textbox',\n    tel: 'textbox',\n    url: 'textbox',\n    number: 'textbox',\n    date: 'datepicker',\n    time: 'timepicker',\n    datetime: 'datepicker',\n    'datetime-local': 'datepicker',\n    month: 'datepicker',\n    week: 'datepicker',\n    checkbox: 'checkbox',\n    radio: 'radio',\n    button: 'button',\n    submit: 'button',\n    reset: 'button',\n  };\n\n  return typeMap[type] || 'textbox';\n}\n\n/**\n * Check if element is interactive and should get an ID\n */\nfunction isInteractive(el) {\n  const tag = el.tagName.toLowerCase();\n  const interactiveTags = ['a', 'button', 'input', 'select', 'textarea', 'label'];\n\n  if (interactiveTags.includes(tag)) {\n    return true;\n  }\n\n  const role = el.getAttribute('role');\n  const interactiveRoles = [\n    'button',\n    'link',\n    'tab',\n    'menuitem',\n    'option',\n    'checkbox',\n    'radio',\n    'textbox',\n    'searchbox',\n    'combobox',\n  ];\n\n  if (role && interactiveRoles.includes(role)) {\n    return true;\n  }\n\n  if (el.getAttribute('onclick') || el.getAttribute('ng-click')) {\n    return true;\n  }\n\n  return false;\n}\n\n/**\n * Get label for an element\n */\nfunction getElementLabel(el) {\n  const ariaLabel = el.getAttribute('aria-label');\n  if (ariaLabel) {\n    return ariaLabel;\n  }\n\n  const ariaLabelledBy = el.getAttribute('aria-labelledby');\n  if (ariaLabelledBy) {\n    const labelEl = document.getElementById(ariaLabelledBy);\n    if (labelEl) {\n      return labelEl.textContent?.trim();\n    }\n  }\n\n  if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {\n    const id = el.id;\n    if (id) {\n      const label = document.querySelector(`label[for=\"${id}\"]`);\n      if (label) {\n        return label.textContent?.trim();\n      }\n    }\n\n    const parentLabel = el.closest('label');\n    if (parentLabel) {\n      const clone = parentLabel.cloneNode(true);\n      const input = clone.querySelector('input, select, textarea');\n      if (input) {\n        input.remove();\n      }\n      return clone.textContent?.trim();\n    }\n  }\n\n  if (el.tagName === 'LABEL') {\n    return el.textContent?.trim();\n  }\n\n  return undefined;\n}\n\n/**\n * Get visible text content (first 50 chars)\n */\nfunction getVisibleText(el) {\n  const clone = el.cloneNode(true);\n\n  const toRemove = clone.querySelectorAll('script, style, [hidden]');\n  toRemove.forEach((n) => n.remove());\n\n  const text = clone.textContent?.trim();\n  if (!text) {\n    return undefined;\n  }\n\n  return text.length > 50 ? text.substring(0, 50) : text;\n}\n\n/**\n * Build DOM tree node\n */\nfunction buildNode(el, depth, maxDepth) {\n  if (depth > maxDepth) {\n    return null;\n  }\n\n  const type = getSemanticType(el);\n  const interactive = isInteractive(el);\n\n  const node = { type };\n\n  if (interactive) {\n    node.id = ++nodeIdCounter;\n  }\n\n  const label = getElementLabel(el);\n  if (label) {\n    node.label = label;\n  }\n\n  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {\n    const input = el;\n    if (input.value) {\n      node.value = input.value;\n    }\n    if (input.placeholder) {\n      node.placeholder = input.placeholder;\n    }\n  }\n\n  if (el.tagName === 'SELECT') {\n    const select = el;\n    const selected = select.options[select.selectedIndex];\n    if (selected) {\n      node.value = selected.text;\n    }\n  }\n\n  if (el.tagName === 'A') {\n    const anchor = el;\n    if (anchor.href) {\n      node.href = anchor.href;\n    }\n  }\n\n  if (el.tagName === 'BUTTON') {\n    const button = el;\n    if (button.type === 'submit' || button.classList.contains('primary')) {\n      node.primary = true;\n    }\n  }\n\n  if (el.classList.contains('active') || el.getAttribute('aria-current') === 'page') {\n    node.active = true;\n  }\n\n  const children = [];\n  for (const child of Array.from(el.children)) {\n    const childNode = buildNode(child, depth + 1, maxDepth);\n    if (childNode) {\n      children.push(childNode);\n    }\n  }\n\n  if (children.length > 0) {\n    node.children = children;\n  } else {\n    const text = getVisibleText(el);\n    if (text) {\n      if (type === 'text' || type === 'p' || type === 'span' || type === 'div') {\n        node.content = text;\n      } else {\n        node.text = text;\n      }\n    }\n  }\n\n  if (!interactive && children.length === 0 && !node.text && !node.content && depth > 0) {\n    return null;\n  }\n\n  return node;\n}\n\n/**\n * Get page structure\n */\nfunction getPageStructure(maxDepth = 10) {\n  nodeIdCounter = 0;\n\n  const tree = buildNode(document.body, 0, maxDepth);\n\n  return {\n    page: document.title,\n    url: window.location.href,\n    tree: tree,\n  };\n}\n\n\n  // Return results as JSON\n  window.__arcMCPResult = function(result) {\n    return JSON.stringify(result);\n  };\n})();";
 
 // ../browser/dist/api.js
 async function executeBrowserAction(actionFn, args, tabId) {
@@ -18043,6 +18071,9 @@ async function executeBrowserAction(actionFn, args, tabId) {
     JSON.stringify(${actionFn}(${args}))
   `;
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+  if (!result || result === "missing value") {
+    return { success: false, error: "Could not find element (page may be empty)" };
+  }
   return JSON.parse(result);
 }
 async function click(locator, options = {}) {
@@ -18063,6 +18094,9 @@ async function getPageStructure(maxDepth = 10, tabId) {
     JSON.stringify(getPageStructure(${maxDepth}))
   `;
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+  if (!result || result === "missing value") {
+    return null;
+  }
   return JSON.parse(result);
 }
 
@@ -18105,7 +18139,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (name !== "execute") {
       throw new Error(`Unknown tool: ${name}`);
     }
-    ensureArcRunning();
+    ensureBrowserRunning();
     const { code } = safeArgs;
     const fn = AsyncFunction("browser", code);
     const result = await fn(dist_exports);

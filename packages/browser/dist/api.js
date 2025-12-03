@@ -13,6 +13,10 @@ async function executeBrowserAction(actionFn, args, tabId) {
     JSON.stringify(${actionFn}(${args}))
   `;
     const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+    // Handle "missing value" from Chrome on empty tabs
+    if (!result || result === 'missing value') {
+        return { success: false, error: 'Could not find element (page may be empty)' };
+    }
     return JSON.parse(result);
 }
 /**
@@ -48,6 +52,10 @@ export async function getPageStructure(maxDepth = 10, tabId) {
     JSON.stringify(getPageStructure(${maxDepth}))
   `;
     const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+    // Handle "missing value" from Chrome on empty tabs
+    if (!result || result === 'missing value') {
+        return null;
+    }
     return JSON.parse(result);
 }
 //# sourceMappingURL=api.js.map

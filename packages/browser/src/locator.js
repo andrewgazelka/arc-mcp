@@ -6,15 +6,15 @@
 /**
  * Find element by ARIA role (explicit or implicit)
  */
-function findByRole(role: string, name?: string): Element | null {
-  const candidates: Element[] = [];
+function findByRole(role, name) {
+  const candidates = [];
 
   // Add explicit role attributes
   const explicitRoles = document.querySelectorAll(`[role="${role}"]`);
   candidates.push(...Array.from(explicitRoles));
 
   // Add implicit HTML elements that map to this role
-  const implicitMap: Record<string, string> = {
+  const implicitMap = {
     button: 'BUTTON, [type="button"], [type="submit"]',
     link: 'A[href]',
     textbox: 'INPUT[type="text"], INPUT:not([type]), TEXTAREA',
@@ -60,7 +60,7 @@ function findByRole(role: string, name?: string): Element | null {
 /**
  * Find input by associated label text
  */
-function findByLabel(labelText: string): Element | null {
+function findByLabel(labelText) {
   const labels = Array.from(document.querySelectorAll('label'));
 
   for (const label of labels) {
@@ -84,15 +84,15 @@ function findByLabel(labelText: string): Element | null {
 /**
  * Find element by visible text content
  */
-function findByText(text: string, exact: boolean = false): Element | null {
+function findByText(text, exact = false) {
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT,
     null
   );
 
-  const matches: Element[] = [];
-  let node: Node | null;
+  const matches = [];
+  let node;
 
   while ((node = walker.nextNode())) {
     const content = node.textContent?.trim() || '';
@@ -114,21 +114,21 @@ function findByText(text: string, exact: boolean = false): Element | null {
 /**
  * Find input by placeholder attribute
  */
-function findByPlaceholder(placeholder: string): Element | null {
+function findByPlaceholder(placeholder) {
   return document.querySelector(`[placeholder="${placeholder}"]`);
 }
 
 /**
  * Find element by data-testid attribute
  */
-function findByTestId(testId: string): Element | null {
+function findByTestId(testId) {
   return document.querySelector(`[data-testid="${testId}"]`);
 }
 
 /**
  * Main locator dispatcher
  */
-function findElement(locator: any): Element | null {
+function findElement(locator) {
   if ('role' in locator) {
     return findByRole(locator.role.role, locator.role.name);
   }

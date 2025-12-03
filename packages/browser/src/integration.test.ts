@@ -4,8 +4,8 @@ import { click, fill, getPageStructure } from "./api.js";
 
 describe("integration tests", () => {
   test.skip("should handle Google search flow", async () => {
-    // Skipped: openUrl with newTab false is not reliably navigating
-    await openUrl("https://www.google.com", false);
+    // Skipped: Test is flaky due to concurrent test runs opening multiple tabs
+    await openUrl("https://www.google.com", true);
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const tab = await getCurrentTab();

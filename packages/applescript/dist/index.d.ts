@@ -10,7 +10,13 @@ export interface ExecuteOptions {
     timeout?: number;
 }
 /**
- * Executes JavaScript code in an Arc browser tab via AppleScript.
+ * Get the browser application name from environment.
+ * Defaults to "Arc", can be overridden with BROWSER=chrome
+ */
+export declare function getBrowserApp(): string;
+/**
+ * Executes JavaScript code in a browser tab via AppleScript.
+ * Supports Arc (default) and Google Chrome via BROWSER env var.
  *
  * @param code - The JavaScript code to execute
  * @param options - Execution options

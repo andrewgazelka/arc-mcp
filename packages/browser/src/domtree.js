@@ -7,7 +7,7 @@ let nodeIdCounter = 0;
 /**
  * Map HTML element to semantic type
  */
-function getSemanticType(el: Element): string {
+function getSemanticType(el) {
   const tag = el.tagName.toLowerCase();
   const role = el.getAttribute('role');
 
@@ -17,7 +17,7 @@ function getSemanticType(el: Element): string {
   }
 
   // Map common HTML elements to semantic types
-  const typeMap: Record<string, string> = {
+  const typeMap = {
     nav: 'navigation',
     header: 'header',
     footer: 'footer',
@@ -28,7 +28,7 @@ function getSemanticType(el: Element): string {
     form: 'form',
     button: 'button',
     a: 'link',
-    input: getInputType(el as HTMLInputElement),
+    input: getInputType(el),
     select: 'select',
     textarea: 'textbox',
     h1: 'heading',
@@ -50,9 +50,9 @@ function getSemanticType(el: Element): string {
 /**
  * Get specific input type
  */
-function getInputType(input: HTMLInputElement): string {
+function getInputType(input) {
   const type = input.type || 'text';
-  const typeMap: Record<string, string> = {
+  const typeMap = {
     text: 'textbox',
     search: 'searchbox',
     email: 'textbox',
@@ -79,7 +79,7 @@ function getInputType(input: HTMLInputElement): string {
 /**
  * Check if element is interactive and should get an ID
  */
-function isInteractive(el: Element): boolean {
+function isInteractive(el) {
   const tag = el.tagName.toLowerCase();
   const interactiveTags = ['a', 'button', 'input', 'select', 'textarea', 'label'];
 
@@ -115,7 +115,7 @@ function isInteractive(el: Element): boolean {
 /**
  * Get label for an element
  */
-function getElementLabel(el: Element): string | undefined {
+function getElementLabel(el) {
   const ariaLabel = el.getAttribute('aria-label');
   if (ariaLabel) {
     return ariaLabel;
@@ -140,7 +140,7 @@ function getElementLabel(el: Element): string | undefined {
 
     const parentLabel = el.closest('label');
     if (parentLabel) {
-      const clone = parentLabel.cloneNode(true) as HTMLElement;
+      const clone = parentLabel.cloneNode(true);
       const input = clone.querySelector('input, select, textarea');
       if (input) {
         input.remove();
@@ -150,7 +150,7 @@ function getElementLabel(el: Element): string | undefined {
   }
 
   if (el.tagName === 'LABEL') {
-    return (el as HTMLLabelElement).textContent?.trim();
+    return el.textContent?.trim();
   }
 
   return undefined;
@@ -159,8 +159,8 @@ function getElementLabel(el: Element): string | undefined {
 /**
  * Get visible text content (first 50 chars)
  */
-function getVisibleText(el: Element): string | undefined {
-  const clone = el.cloneNode(true) as HTMLElement;
+function getVisibleText(el) {
+  const clone = el.cloneNode(true);
 
   const toRemove = clone.querySelectorAll('script, style, [hidden]');
   toRemove.forEach((n) => n.remove());
@@ -176,7 +176,7 @@ function getVisibleText(el: Element): string | undefined {
 /**
  * Build DOM tree node
  */
-function buildNode(el: Element, depth: number, maxDepth: number): any {
+function buildNode(el, depth, maxDepth) {
   if (depth > maxDepth) {
     return null;
   }
@@ -184,7 +184,7 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
   const type = getSemanticType(el);
   const interactive = isInteractive(el);
 
-  const node: any = { type };
+  const node = { type };
 
   if (interactive) {
     node.id = ++nodeIdCounter;
@@ -196,7 +196,7 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
   }
 
   if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-    const input = el as HTMLInputElement;
+    const input = el;
     if (input.value) {
       node.value = input.value;
     }
@@ -206,7 +206,7 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
   }
 
   if (el.tagName === 'SELECT') {
-    const select = el as HTMLSelectElement;
+    const select = el;
     const selected = select.options[select.selectedIndex];
     if (selected) {
       node.value = selected.text;
@@ -214,14 +214,14 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
   }
 
   if (el.tagName === 'A') {
-    const anchor = el as HTMLAnchorElement;
+    const anchor = el;
     if (anchor.href) {
       node.href = anchor.href;
     }
   }
 
   if (el.tagName === 'BUTTON') {
-    const button = el as HTMLButtonElement;
+    const button = el;
     if (button.type === 'submit' || button.classList.contains('primary')) {
       node.primary = true;
     }
@@ -231,7 +231,7 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
     node.active = true;
   }
 
-  const children: any[] = [];
+  const children = [];
   for (const child of Array.from(el.children)) {
     const childNode = buildNode(child, depth + 1, maxDepth);
     if (childNode) {
@@ -262,7 +262,7 @@ function buildNode(el: Element, depth: number, maxDepth: number): any {
 /**
  * Get page structure
  */
-function getPageStructure(maxDepth: number = 10): any {
+function getPageStructure(maxDepth = 10) {
   nodeIdCounter = 0;
 
   const tree = buildNode(document.body, 0, maxDepth);

@@ -6,7 +6,7 @@
 /**
  * Describe an element for user feedback
  */
-function describeElement(el: Element): string {
+function describeElement(el) {
   const tag = el.tagName.toLowerCase();
   const id = el.id ? `#${el.id}` : '';
   const text = el.textContent?.substring(0, 30).trim() || '';
@@ -24,7 +24,7 @@ function describeElement(el: Element): string {
 /**
  * Click an element
  */
-function clickElement(locator: any): any {
+function clickElement(locator) {
   const element = findElement(locator);
 
   if (!element) {
@@ -37,7 +37,7 @@ function clickElement(locator: any): any {
   // Dispatch proper mouse events
   element.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
   element.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-  (element as HTMLElement).click();
+  element.click();
 
   return {
     success: true,
@@ -48,7 +48,7 @@ function clickElement(locator: any): any {
 /**
  * Fill an input with a value (fast, replaces entire value)
  */
-function fillElement(locator: any, value: string): any {
+function fillElement(locator, value) {
   const element = findElement(locator);
 
   if (!element) {
@@ -65,7 +65,7 @@ function fillElement(locator: any, value: string): any {
     };
   }
 
-  const input = element as HTMLInputElement;
+  const input = element;
 
   // Clear and set value
   input.value = '';
@@ -84,7 +84,7 @@ function fillElement(locator: any, value: string): any {
 /**
  * Type text character by character (triggers autocomplete)
  */
-function typeElement(locator: any, text: string): any {
+function typeElement(locator, text) {
   const element = findElement(locator);
 
   if (!element) {
@@ -101,7 +101,7 @@ function typeElement(locator: any, text: string): any {
     };
   }
 
-  const input = element as HTMLInputElement;
+  const input = element;
   input.focus();
 
   // Type character by character
@@ -122,7 +122,7 @@ function typeElement(locator: any, text: string): any {
 /**
  * Select an option from a dropdown
  */
-function selectOption(locator: any, option: string): any {
+function selectOption(locator, option) {
   const element = findElement(locator);
 
   if (!element) {
@@ -139,7 +139,7 @@ function selectOption(locator: any, option: string): any {
     };
   }
 
-  const select = element as HTMLSelectElement;
+  const select = element;
   const options = Array.from(select.options);
 
   // Find option by text or value

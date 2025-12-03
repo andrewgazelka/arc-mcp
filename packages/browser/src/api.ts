@@ -22,6 +22,10 @@ async function executeBrowserAction(
   `;
 
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+  // Handle "missing value" from Chrome on empty tabs
+  if (!result || result === 'missing value') {
+    return { success: false, error: 'Could not find element (page may be empty)' };
+  }
   return JSON.parse(result as string);
 }
 
@@ -97,5 +101,9 @@ export async function getPageStructure(
   `;
 
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
+  // Handle "missing value" from Chrome on empty tabs
+  if (!result || result === 'missing value') {
+    return null;
+  }
   return JSON.parse(result as string);
 }

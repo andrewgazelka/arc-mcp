@@ -14,7 +14,20 @@ export interface ExecuteOptions {
 }
 
 /**
- * Executes JavaScript code in an Arc browser tab via AppleScript.
+ * Get the browser application name from environment.
+ * Defaults to "Arc", can be overridden with BROWSER=chrome
+ */
+export function getBrowserApp(): string {
+  const browser = process.env.BROWSER?.toLowerCase();
+  if (browser === 'chrome') {
+    return 'Google Chrome';
+  }
+  return 'Arc';
+}
+
+/**
+ * Executes JavaScript code in a browser tab via AppleScript.
+ * Supports Arc (default) and Google Chrome via BROWSER env var.
  *
  * @param code - The JavaScript code to execute
  * @param options - Execution options
@@ -26,6 +39,7 @@ export function executeArcJavaScript(
   options: ExecuteOptions = {}
 ): any {
   const { tabId } = options;
+  const browserApp = getBrowserApp();
 
   // Base64 encode the JavaScript to avoid escaping issues
   const encodedCode = Buffer.from(code).toString("base64");
@@ -33,7 +47,7 @@ export function executeArcJavaScript(
   // Build the AppleScript - use atob() in JavaScript instead of shell script
   const tabSelector = tabId ? `tab id ${tabId}` : "active tab";
   const appleScript = `
-tell application "Arc"
+tell application "${browserApp}"
   tell front window
     tell ${tabSelector}
       execute javascript "eval(atob('${encodedCode}'))"
@@ -48,7 +62,7 @@ end tell
     });
     return parseAppleScriptResult(result.trim());
   } catch (error: any) {
-    throw new Error(`Failed to execute Arc JavaScript: ${error.message}`);
+    throw new Error(`Failed to execute ${browserApp} JavaScript: ${error.message}`);
   }
 }
 
@@ -58,6 +72,8 @@ end tell
  */
 function parseAppleScriptResult(result: string): any {
   if (!result) return null;
+  // Chrome returns "missing value" for null/undefined
+  if (result === 'missing value') return null;
 
   try {
     return JSON.parse(result);

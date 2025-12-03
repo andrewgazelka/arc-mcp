@@ -1,9 +1,10 @@
 /**
  * Navigation and tab management functions
  * These use pure AppleScript (not browser JavaScript)
+ * Supports Arc (default) and Google Chrome via BROWSER env var
  */
 
-import { executeAppleScript } from './applescript.js';
+import { executeAppleScript, getBrowserApp, ensureBrowserRunning } from './applescript.js';
 
 export interface TabInfo {
   id?: number;
@@ -12,12 +13,13 @@ export interface TabInfo {
 }
 
 /**
- * Open a URL in Arc browser
+ * Open a URL in the browser
  */
 export async function openUrl(url: string, newTab: boolean = true): Promise<{ success: true }> {
+  const browserApp = getBrowserApp();
   const script = newTab
-    ? `tell application "Arc" to tell front window to make new tab with properties {URL:"${url}"}`
-    : `tell application "Arc" to open location "${url}"`;
+    ? `tell application "${browserApp}" to tell front window to make new tab with properties {URL:"${url}"}`
+    : `tell application "${browserApp}" to open location "${url}"`;
 
   executeAppleScript(script);
   return { success: true };
@@ -27,8 +29,9 @@ export async function openUrl(url: string, newTab: boolean = true): Promise<{ su
  * Get information about the current active tab
  */
 export async function getCurrentTab(): Promise<TabInfo> {
+  const browserApp = getBrowserApp();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         return (title of active tab) & "|" & (URL of active tab)
       end tell
@@ -44,8 +47,9 @@ export async function getCurrentTab(): Promise<TabInfo> {
  * List all open tabs
  */
 export async function listTabs(): Promise<TabInfo[]> {
+  const browserApp = getBrowserApp();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set tabList to {}
         set tabIndex to 1
@@ -74,8 +78,9 @@ export async function listTabs(): Promise<TabInfo[]> {
  * Close a specific tab by index (1-based)
  */
 export async function closeTab(tabId: number): Promise<void> {
+  const browserApp = getBrowserApp();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         close tab ${tabId}
       end tell
@@ -89,8 +94,9 @@ export async function closeTab(tabId: number): Promise<void> {
  * Switch to a specific tab by index (1-based)
  */
 export async function switchToTab(tabId: number): Promise<void> {
+  const browserApp = getBrowserApp();
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         set active tab to tab ${tabId}
       end tell
@@ -104,9 +110,10 @@ export async function switchToTab(tabId: number): Promise<void> {
  * Reload a tab by index (1-based), or current tab if not specified
  */
 export async function reloadTab(tabId?: number): Promise<void> {
+  const browserApp = getBrowserApp();
   const script = tabId
-    ? `tell application "Arc" to tell front window to reload tab ${tabId}`
-    : `tell application "Arc" to tell front window to reload active tab`;
+    ? `tell application "${browserApp}" to tell front window to reload tab ${tabId}`
+    : `tell application "${browserApp}" to tell front window to reload active tab`;
 
   executeAppleScript(script);
 }
@@ -115,9 +122,10 @@ export async function reloadTab(tabId?: number): Promise<void> {
  * Navigate back in browser history
  */
 export async function goBack(tabId?: number): Promise<void> {
+  const browserApp = getBrowserApp();
   const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.back()"
@@ -133,9 +141,10 @@ export async function goBack(tabId?: number): Promise<void> {
  * Navigate forward in browser history
  */
 export async function goForward(tabId?: number): Promise<void> {
+  const browserApp = getBrowserApp();
   const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "window.history.forward()"
@@ -151,11 +160,12 @@ export async function goForward(tabId?: number): Promise<void> {
  * Execute arbitrary JavaScript in a tab by index (1-based), or current tab if not specified
  */
 export async function executeJavaScript(code: string, tabId?: number): Promise<any> {
+  const browserApp = getBrowserApp();
   const tabSelector = tabId ? `tab ${tabId}` : 'active tab';
   const base64Code = Buffer.from(code).toString('base64');
 
   const script = `
-    tell application "Arc"
+    tell application "${browserApp}"
       tell front window
         tell ${tabSelector}
           execute javascript "eval(atob('${base64Code}'))"
@@ -172,17 +182,5 @@ export async function executeJavaScript(code: string, tabId?: number): Promise<a
   }
 }
 
-/**
- * Check if Arc is running
- */
-export function ensureArcRunning(): void {
-  const script = `
-    tell application "System Events"
-      return (name of processes) contains "Arc"
-    end tell
-  `;
-  const isRunning = executeAppleScript(script);
-  if (isRunning !== 'true') {
-    throw new Error('Arc browser is not running');
-  }
-}
+// Re-export for compatibility
+export { ensureBrowserRunning as ensureArcRunning } from './applescript.js';

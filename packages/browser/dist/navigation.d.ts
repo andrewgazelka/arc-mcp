@@ -1,6 +1,7 @@
 /**
  * Navigation and tab management functions
  * These use pure AppleScript (not browser JavaScript)
+ * Supports Arc (default) and Google Chrome via BROWSER env var
  */
 export interface TabInfo {
     id?: number;
@@ -8,7 +9,7 @@ export interface TabInfo {
     url: string;
 }
 /**
- * Open a URL in Arc browser
+ * Open a URL in the browser
  */
 export declare function openUrl(url: string, newTab?: boolean): Promise<{
     success: true;
@@ -45,8 +46,5 @@ export declare function goForward(tabId?: number): Promise<void>;
  * Execute arbitrary JavaScript in a tab by index (1-based), or current tab if not specified
  */
 export declare function executeJavaScript(code: string, tabId?: number): Promise<any>;
-/**
- * Check if Arc is running
- */
-export declare function ensureArcRunning(): void;
+export { ensureBrowserRunning as ensureArcRunning } from './applescript.js';
 //# sourceMappingURL=navigation.d.ts.map
