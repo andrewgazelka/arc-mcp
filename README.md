@@ -14,9 +14,12 @@
 
 ## Installation
 
-Download the latest `.mcpb` from [releases](https://github.com/andrewgazelka/arc-mcp/releases), then in Claude Desktop:
+1. Download the latest `.mcpb` file from [releases](https://github.com/andrewgazelka/arc-mcp/releases)
+2. Open Claude Desktop
+3. Go to **Settings → Extensions**
+4. **Drag and drop** the `.mcpb` file onto the window where it says "Drag .MCPB or .DXT files here to install"
 
-**Settings → Extensions → Install Extension**
+That's it! The extension will be installed and ready to use.
 
 ## Use Cases
 
