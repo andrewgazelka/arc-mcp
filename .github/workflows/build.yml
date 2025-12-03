@@ -1,4 +1,4 @@
-name: Build MCPB
+name: Build
 
 on:
   push:
@@ -13,18 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: '20'
 
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       - name: Build TypeScript
-        run: bun run build
+        run: npm run build
 
       - name: Package MCPB
-        run: bunx @anthropic-ai/mcpb pack
+        run: npx @anthropic-ai/mcpb pack
 
       - name: Upload MCPB artifact
         uses: actions/upload-artifact@v4

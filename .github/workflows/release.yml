@@ -2,6 +2,8 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -14,39 +16,47 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          fetch-depth: 0
 
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       - name: Build TypeScript
-        run: bun run build
+        run: npm run build
 
       - name: Package MCPB
-        run: bunx @anthropic-ai/mcpb pack
+        run: npx @anthropic-ai/mcpb pack
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Get version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(node -p "require('./package.json').version")
+            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+            echo "TAG=v${VERSION}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.TAG }}
           files: "*.mcpb"
+          generate_release_notes: true
           body: |
             ## Installation
 
-            1. Download the `arc-mcp-${{ steps.get_version.outputs.VERSION }}.mcpb` file below
-            2. Open Claude Desktop
-            3. Go to Settings > Extensions
-            4. Click "Install Extension"
-            5. Select the downloaded `.mcpb` file
+            Download the `arc-mcp-${{ steps.version.outputs.VERSION }}.mcpb` file below and install it in Claude Desktop:
 
-            ## What's New
+            1. Open Claude Desktop
+            2. Go to Settings > Extensions
+            3. Click "Install Extension"
+            4. Select the downloaded `.mcpb` file
 
-            See the [commit history](https://github.com/andrewgazelka/arc-mcp/commits/${{ github.ref_name }}) for changes in this release.
+            ## Changes
           draft: false
           prerelease: false
+          fail_on_unmatched_files: true
