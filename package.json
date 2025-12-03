@@ -1,10 +1,13 @@
 {
-  "name": "arc-mcp",
+  "name": "arc-mcp-server",
   "version": "2.0.0",
-  "description": "Playwright-style semantic browser automation for Arc browser - control with semantic locators (role, label, text)",
+  "description": "MCP server for Arc browser automation with Playwright-style semantic locators",
   "author": "Andrew Gazelka",
   "type": "module",
-  "private": true,
+  "private": false,
+  "bin": {
+    "arc-mcp-server": "./index.js"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -12,11 +15,15 @@
     "build": "npm run build -w @arc-mcp/applescript && npm run build -w @arc-mcp/browser && npm run build -w arc-mcp-server",
     "typecheck": "npm run typecheck -w @arc-mcp/applescript && npm run typecheck -w @arc-mcp/browser && npm run typecheck -w arc-mcp-server",
     "pack": "npm run build && cd packages/server && npx @anthropic-ai/mcpb pack",
-    "ci": "npm run typecheck && npm run build"
+    "ci": "npm run typecheck && npm run build",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "esbuild": "^0.27.0",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.2"
   }
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Arc MCP Server - Node.js REPL for browser automation
  *
