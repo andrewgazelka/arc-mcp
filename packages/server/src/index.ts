@@ -73,6 +73,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const fn = AsyncFunction('browser', code);
     const result = await fn(browser);
 
+    // Check if result is an ActionResult with success: false
+    if (result && typeof result === 'object' && 'success' in result && result.success === false) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Action failed: ${result.error || 'Unknown error'}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+
     // Format result
     const output =
       result === undefined

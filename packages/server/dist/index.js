@@ -18113,6 +18113,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { code } = safeArgs;
     const fn = AsyncFunction("browser", code);
     const result = await fn(dist_exports);
+    if (result && typeof result === "object" && "success" in result && result.success === false) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Action failed: ${result.error || "Unknown error"}`
+          }
+        ],
+        isError: true
+      };
+    }
     const output = result === void 0 ? "undefined" : typeof result === "string" ? result : JSON.stringify(result, null, 2);
     return {
       content: [{ type: "text", text: output }]
