@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import ts from 'typescript';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // Handle both running from src/ (dev) and from .build.mjs (CI)
@@ -13,38 +14,31 @@ const locatorCode = readFileSync(join(browserDir, 'locator.ts'), 'utf-8');
 const actionsCode = readFileSync(join(browserDir, 'actions.ts'), 'utf-8');
 const domtreeCode = readFileSync(join(browserDir, 'domtree.ts'), 'utf-8');
 /**
- * Strip TypeScript types and comments
+ * Strip TypeScript types using the TypeScript compiler API
  */
 function stripTypes(code) {
-    return (code
-        // Remove single-line comments
-        .replace(/\/\/.*/g, '')
-        // Remove multi-line comments
-        .replace(/\/\*[\s\S]*?\*\//g, '')
-        // Remove type annotations
-        .replace(/:\s*\w+(\[\])?(\s*\|[^=]*)?/g, '')
-        // Remove interface declarations
-        .replace(/interface\s+\w+\s*\{[^}]*\}/g, '')
-        // Remove type declarations
-        .replace(/type\s+\w+\s*=[^;]+;/g, '')
-        // Remove Record<...> generic types
-        .replace(/:\s*Record<[^>]+>/g, '')
-        // Remove as HTMLElement type assertions
-        .replace(/as\s+HTML\w+/g, '')
-        // Remove 'as any' type assertions
-        .replace(/as\s+any/g, '')
-        // Clean up extra whitespace
-        .replace(/\n\s*\n\s*\n/g, '\n\n'));
+    const result = ts.transpileModule(code, {
+        compilerOptions: {
+            target: ts.ScriptTarget.ES2020,
+            module: ts.ModuleKind.None, // No module system - functions stay at top level
+            removeComments: true,
+        },
+    });
+    return result.outputText;
 }
+// Combine all code into a single module context
+const combinedCode = `
+${locatorCode}
+
+${actionsCode}
+
+${domtreeCode}
+`;
 const bundle = `
 (function() {
   'use strict';
 
-  ${stripTypes(locatorCode)}
-
-  ${stripTypes(actionsCode)}
-
-  ${stripTypes(domtreeCode)}
+  ${stripTypes(combinedCode)}
 
   // Return results as JSON
   window.__arcMCPResult = function(result) {
