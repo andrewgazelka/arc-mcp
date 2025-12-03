@@ -3,22 +3,20 @@
   "version": "2.0.0",
   "description": "Playwright-style semantic browser automation for Arc browser - control with semantic locators (role, label, text)",
   "author": "Andrew Gazelka",
-  "module": "src/index.ts",
   "type": "module",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "prebuild": "node src/browser/build.ts",
-    "build": "tsc && esbuild src/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/index.js --external:@modelcontextprotocol/sdk",
-    "typecheck": "tsc --noEmit",
-    "pack": "npm run build && npx @anthropic-ai/mcpb pack",
+    "build": "npm run build -w @arc-mcp/applescript && npm run build -w @arc-mcp/browser && npm run build -w arc-mcp-server",
+    "typecheck": "npm run typecheck -w @arc-mcp/applescript && npm run typecheck -w @arc-mcp/browser && npm run typecheck -w arc-mcp-server",
+    "pack": "npm run build && cd packages/server && npx @anthropic-ai/mcpb pack",
     "ci": "npm run typecheck && npm run build"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "esbuild": "^0.27.0",
     "typescript": "^5.7.2"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.24.2"
   }
 }

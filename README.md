@@ -33,74 +33,108 @@ That's it! The extension will be installed and ready to use.
 
 ## Features
 
+### Node.js REPL
+Execute automation scripts with full access to the browser API — no predefined tool constraints.
+
+```javascript
+await browser.click({ role: { role: 'button', name: 'Search' } });
+await browser.fill({ label: 'Email' }, 'user@example.com');
+const tabs = await browser.listTabs();
+return tabs.length;
+```
+
 ### Semantic Locators
 Find elements the way users see them — by role, label, text, or placeholder. No more fragile CSS selectors.
 
-```json
-{
-  "tool": "click",
-  "arguments": {
-    "role": { "role": "button", "name": "Search" }
-  }
-}
+```javascript
+await browser.click({ role: { role: 'button', name: 'Search' } });
+await browser.fill({ label: 'Email' }, 'user@example.com');
+await browser.type({ placeholder: 'Search...' }, 'London');
 ```
 
 ### Smart DOM Tree
 Get a structured, semantic representation of the page with only interactive elements.
 
-```json
-{
-  "tool": "get_page_structure",
-  "arguments": { "max_depth": 10 }
-}
+```javascript
+const structure = await browser.getPageStructure(10);
 ```
 
-## Semantic Actions
+## Available Functions
 
-| Tool | Description | Example |
-|------|-------------|---------|
-| `click` | Click by role, label, text, placeholder, or CSS | `{ "role": { "role": "button", "name": "Search" } }` |
-| `fill` | Fast fill input (replaces entire value) | `{ "label": "Email", "value": "user@example.com" }` |
-| `type` | Type character-by-character (triggers autocomplete) | `{ "placeholder": "Where to?", "text_to_type": "London" }` |
-| `select_option` | Select dropdown option by text or value | `{ "label": "Country", "option": "United Kingdom" }` |
-| `get_page_structure` | Get semantic DOM tree with interactive elements | `{ "max_depth": 10 }` |
+The `browser` object provides:
 
-## Navigation & Tab Management
+**Semantic Actions**:
+- `click(locator, options?)` — Click element by role, label, text, placeholder, or CSS
+- `fill(locator, value, options?)` — Fast fill (replaces entire value)
+- `type(locator, text, options?)` — Type character-by-character (triggers autocomplete)
+- `selectOption(locator, option, options?)` — Select dropdown option
 
-| Tool | Description |
-|------|-------------|
-| `open_url` | Open URLs in new or current tab |
-| `get_current_tab` | Get active tab info |
-| `list_tabs` | List all open tabs |
-| `close_tab` | Close tab by ID |
-| `switch_to_tab` | Switch to tab by ID |
-| `reload_tab` | Reload tab |
-| `go_back` | Navigate back |
-| `go_forward` | Navigate forward |
-| `execute_javascript` | Run arbitrary JavaScript |
+**Navigation**:
+- `openUrl(url, newTab?)` — Open URL in new or current tab
+- `getCurrentTab()` — Get active tab info (title, URL)
+- `listTabs()` — List all open tabs
+- `switchToTab(tabId)` — Switch to tab by index
+- `closeTab(tabId)` — Close tab by index
+- `reloadTab(tabId?)` — Reload tab
+- `goBack(tabId?)` — Navigate back
+- `goForward(tabId?)` — Navigate forward
+
+**Page Analysis**:
+- `getPageStructure(maxDepth?, tabId?)` — Get semantic DOM tree
+
+**Low-Level**:
+- `executeJavaScript(code, tabId?)` — Run arbitrary JavaScript
 
 ## Example Workflow
 
-```json
-[
-  { "tool": "open_url", "arguments": { "url": "https://www.google.com/travel/flights" } },
-  { "tool": "fill", "arguments": { "label": "Where from?", "value": "San Francisco" } },
-  { "tool": "type", "arguments": { "placeholder": "Where to?", "text_to_type": "London" } },
-  { "tool": "click", "arguments": { "role": { "role": "button", "name": "Search" } } }
-]
+```javascript
+// Open Google Flights
+await browser.openUrl('https://www.google.com/travel/flights');
+
+// Fill origin
+await browser.fill({ label: 'Where from?' }, 'San Francisco');
+
+// Type destination (triggers autocomplete)
+await browser.type({ placeholder: 'Where to?' }, 'London');
+
+// Click search
+await browser.click({ role: { role: 'button', name: 'Search' } });
 ```
+
+## Architecture
+
+This is a monorepo with three packages:
+
+- **@arc-mcp/applescript** — Low-level AppleScript bridge for Arc
+- **@arc-mcp/browser** — High-level Node.js API with semantic locators
+- **arc-mcp-server** — MCP server exposing REPL
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design.
 
 ## Requirements
 
 - macOS
 - Arc browser
 
-## Build
+## Development
 
 ```bash
 npm install
-npm run build
-npm run pack
+npm run build        # Build all packages
+npm run typecheck    # Type check all packages
+npm run pack         # Create .mcpb bundle
+```
+
+## Package Usage
+
+Each package can be used independently:
+
+```bash
+# Use browser API in your own scripts
+npm install @arc-mcp/browser
+
+# Use AppleScript bridge directly
+npm install @arc-mcp/applescript
 ```
 
 ---

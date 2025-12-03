@@ -1,10 +1,6 @@
----
-description: This project uses npm for package management.
-globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
-alwaysApply: false
----
-
 This project uses npm for package management.
+
+Breaking changes good and are encouraged; this is MCP (called by intelligent model) so no care for breaking
 
 - Use `npm install` for installing dependencies
 - Use `npm run <script>` for running scripts
