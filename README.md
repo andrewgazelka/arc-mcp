@@ -6,7 +6,6 @@
 
 <p>
 <img src=".github/assets/claude-logo.svg" alt="Claude" height="20" />
-<img src=".github/assets/claude-code-logo.svg" alt="Claude Code" height="20" />
 </p>
 
 [![Build](https://github.com/andrewgazelka/arc-mcp/actions/workflows/build.yml/badge.svg)](https://github.com/andrewgazelka/arc-mcp/actions/workflows/build.yml)
