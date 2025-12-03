@@ -15,5 +15,7 @@ export default defineConfig({
     retry: 0,
     // Bail on first failure to avoid hanging
     bail: 1,
+    // Allow tests to pass when all are skipped (CI without Arc)
+    passWithNoTests: true,
   },
 });
