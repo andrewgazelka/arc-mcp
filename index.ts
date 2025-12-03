@@ -408,11 +408,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "execute_javascript": {
         const { code, tab_id } = args as { code: string; tab_id?: number };
         const tabSelector = tab_id ? `tab ${tab_id}` : "active tab";
+        const base64Code = Buffer.from(code).toString('base64');
         const script = `
           tell application "Arc"
             tell front window
               tell ${tabSelector}
-                execute javascript "${code.replace(/"/g, '\\"')}"
+                execute javascript "eval(atob('${base64Code}'))"
               end tell
             end tell
           end tell
@@ -464,11 +465,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             return 'Clicked element: ' + element.tagName + (element.id ? '#' + element.id : '') + (element.className ? '.' + element.className.split(' ').join('.') : '');
           })()
         `;
+        const base64Js = Buffer.from(jsCode).toString('base64');
         const script = `
           tell application "Arc"
             tell front window
               tell ${tabSelector}
-                execute javascript "${jsCode.replace(/"/g, '\\"').replace(/\n/g, ' ')}"
+                execute javascript "eval(atob('${base64Js}'))"
               end tell
             end tell
           end tell
@@ -542,11 +544,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             return JSON.stringify(traverse(document.body, 0, ${max_depth}), null, 2);
           })()
         `;
+        const base64Js = Buffer.from(jsCode).toString('base64');
         const script = `
           tell application "Arc"
             tell front window
               tell ${tabSelector}
-                execute javascript "${jsCode.replace(/"/g, '\\"').replace(/\n/g, ' ')}"
+                execute javascript "eval(atob('${base64Js}'))"
               end tell
             end tell
           end tell
