@@ -72,11 +72,11 @@ describe("integration tests", () => {
 
     // Try to interact with search box
     try {
-      await fill({ role: { role: "combobox", name: /search/i } }, "Arc browser");
+      await fill({ role: { role: "combobox", name: "Search" } }, "Arc browser");
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Press Enter to search (simulate Enter key)
-      await click({ role: { role: "button", name: /search/i } });
+      await click({ role: { role: "button", name: "Google Search" } });
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Should have navigated to search results
