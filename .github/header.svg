@@ -1,0 +1,36 @@
+<svg width="800" height="120" viewBox="0 0 800 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="120" fill="#0a0a0a"/>
+
+  <!-- Arc icon (simplified browser window) -->
+  <g transform="translate(40, 35)">
+    <rect x="0" y="0" width="50" height="50" rx="8" fill="url(#grad)" opacity="0.9"/>
+    <circle cx="10" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
+    <circle cx="18" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
+    <circle cx="26" cy="12" r="2.5" fill="#0a0a0a" opacity="0.6"/>
+    <rect x="8" y="22" width="34" height="2" rx="1" fill="#0a0a0a" opacity="0.4"/>
+    <rect x="8" y="28" width="28" height="2" rx="1" fill="#0a0a0a" opacity="0.3"/>
+    <rect x="8" y="34" width="32" height="2" rx="1" fill="#0a0a0a" opacity="0.3"/>
+  </g>
+
+  <!-- Title -->
+  <text x="110" y="75" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#ffffff" letter-spacing="-1">
+    Arc MCP
+  </text>
+
+  <!-- Subtitle -->
+  <text x="112" y="95" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#888888" letter-spacing="0.5">
+    Control Arc browser through Claude
+  </text>
+
+  <!-- Decorative line -->
+  <line x1="720" y1="40" x2="760" y2="80" stroke="url(#grad)" stroke-width="2" opacity="0.5"/>
+  <line x1="760" y1="40" x2="720" y2="80" stroke="url(#grad)" stroke-width="2" opacity="0.5"/>
+</svg>
