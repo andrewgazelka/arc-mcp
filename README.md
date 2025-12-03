@@ -18,17 +18,54 @@ Download the latest `.mcpb` from [releases](https://github.com/andrewgazelka/arc
 
 **Settings → Extensions → Install Extension**
 
-## What You Can Do
+## Use Cases
 
+<table>
+<tr>
+<td width="50%">
+
+**✈️ Flight Search**
 ```
-"Open github.com in Arc"
-"List all my tabs"
-"Get the page content"
-"Show me the DOM tree of interactive elements"
-"Click the login button"
-"Execute document.title in the current tab"
-"Close tab 3"
+"Open Google Flights"
+"Click the departure city field"
+"Find the cheapest flight to Tokyo"
 ```
+
+</td>
+<td width="50%">
+
+**🛒 Shopping**
+```
+"Search Amazon for wireless headphones"
+"Click on the first result"
+"Add to cart"
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+**🥗 Groceries**
+```
+"Open Instacart"
+"Get the DOM tree to find products"
+"Add items to my cart"
+```
+
+</td>
+<td>
+
+**📊 Research**
+```
+"Open 5 tabs for competitor analysis"
+"Extract content from each tab"
+"Summarize key features"
+```
+
+</td>
+</tr>
+</table>
 
 ## Tools
 
