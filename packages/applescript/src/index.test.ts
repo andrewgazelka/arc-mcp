@@ -3,19 +3,17 @@ import { executeArcJavaScript } from "./index.js";
 
 describe("executeArcJavaScript", () => {
   test.skip("should execute simple JavaScript and return result", async () => {
-    // Skipped: Requires Arc to be running
+    // Skipped: This package's implementation has issues. Use @arc-browser/browser package instead
     const result = await executeArcJavaScript("1 + 1");
     expect(result).toBe(2);
   });
 
   test.skip("should execute JavaScript that returns a string", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript("'hello world'");
     expect(result).toBe("hello world");
   });
 
   test.skip("should execute JavaScript that returns JSON", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript(
       "JSON.stringify({ foo: 'bar', num: 42 })"
     );
@@ -23,31 +21,26 @@ describe("executeArcJavaScript", () => {
   });
 
   test.skip("should execute JavaScript that returns an array", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript("JSON.stringify([1, 2, 3])");
     expect(result).toBe("[1,2,3]");
   });
 
   test.skip("should handle null return value", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript("null");
     expect(result).toBeNull();
   });
 
   test.skip("should handle undefined return value", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript("undefined");
     expect(result).toBeNull();
   });
 
   test.skip("should execute DOM queries", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript("document.title");
     expect(typeof result).toBe("string");
   });
 
   test.skip("should execute code with special characters", async () => {
-    // Skipped: Requires Arc to be running
     const result = await executeArcJavaScript(
       "JSON.stringify({ quote: '\\\"test\\\"', newline: '\\\\n' })"
     );
@@ -56,7 +49,6 @@ describe("executeArcJavaScript", () => {
   });
 
   test.skip("should respect timeout option", async () => {
-    // Skipped: Requires Arc to be running
     // This test verifies the timeout is passed through
     // We don't actually want to timeout, so we use a long timeout
     const result = await executeArcJavaScript("1 + 1", { timeout: 5000 });
@@ -64,7 +56,6 @@ describe("executeArcJavaScript", () => {
   });
 
   test.skip("should handle complex JavaScript expressions", async () => {
-    // Skipped: Arc behavior varies
     const code = `
       const data = { items: [1, 2, 3] };
       const sum = data.items.reduce((a, b) => a + b, 0);
