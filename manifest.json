@@ -1,0 +1,19 @@
+{
+  "manifest_version": "0.3",
+  "name": "arc-mcp",
+  "display_name": "Arc Browser Control",
+  "version": "0.1.0",
+  "description": "Control Arc browser using AppleScript - open URLs, manage tabs, execute JavaScript, and more",
+  "author": {
+    "name": "Andrew Gazelka"
+  },
+  "homepage": "https://github.com/andrewgazelka/arc-mcp",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"]
+    }
+  }
+}

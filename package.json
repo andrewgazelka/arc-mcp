@@ -1,0 +1,22 @@
+{
+  "name": "arc-mcp",
+  "version": "0.1.0",
+  "description": "Control Arc browser using AppleScript - open URLs, manage tabs, execute JavaScript, and more",
+  "author": "Andrew Gazelka",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "bun build index.ts --outdir dist --target node --format esm",
+    "pack": "mcpb pack"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.2"
+  }
+}
