@@ -1,17 +1,14 @@
 ---
-description: Use Bun instead of Node.js, npm, pnpm, or vite.
+description: This project uses npm for package management.
 globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
 alwaysApply: false
 ---
 
-Default to using Bun instead of Node.js.
+This project uses npm for package management.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+- Use `npm install` for installing dependencies
+- Use `npm run <script>` for running scripts
+- Use `node` for running JavaScript files
 
 ## APIs
 

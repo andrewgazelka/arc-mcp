@@ -2,7 +2,7 @@
 
 ![Arc MCP](.github/header.svg)
 
-**Control Arc browser through Claude Desktop**
+**Playwright-style semantic browser automation for Arc**
 
 <p>
 <img src=".github/assets/claude-logo.svg" alt="Claude" height="20" />
@@ -31,7 +31,41 @@ That's it! The extension will be installed and ready to use.
 
 <img src=".github/assets/icon-research.svg" width="16" height="16" /> **Research** — Open multiple sources, extract data, synthesize information
 
-## Tools
+## Features
+
+### Semantic Locators
+Find elements the way users see them — by role, label, text, or placeholder. No more fragile CSS selectors.
+
+```json
+{
+  "tool": "click",
+  "arguments": {
+    "role": { "role": "button", "name": "Search" }
+  }
+}
+```
+
+### Smart DOM Tree
+Get a structured, semantic representation of the page with only interactive elements.
+
+```json
+{
+  "tool": "get_page_structure",
+  "arguments": { "max_depth": 10 }
+}
+```
+
+## Semantic Actions
+
+| Tool | Description | Example |
+|------|-------------|---------|
+| `click` | Click by role, label, text, placeholder, or CSS | `{ "role": { "role": "button", "name": "Search" } }` |
+| `fill` | Fast fill input (replaces entire value) | `{ "label": "Email", "value": "user@example.com" }` |
+| `type` | Type character-by-character (triggers autocomplete) | `{ "placeholder": "Where to?", "text_to_type": "London" }` |
+| `select_option` | Select dropdown option by text or value | `{ "label": "Country", "option": "United Kingdom" }` |
+| `get_page_structure` | Get semantic DOM tree with interactive elements | `{ "max_depth": 10 }` |
+
+## Navigation & Tab Management
 
 | Tool | Description |
 |------|-------------|
@@ -43,10 +77,18 @@ That's it! The extension will be installed and ready to use.
 | `reload_tab` | Reload tab |
 | `go_back` | Navigate back |
 | `go_forward` | Navigate forward |
-| `execute_javascript` | Run JS in tab |
-| `get_page_content` | Extract page text |
-| `click_element` | Click element by CSS selector |
-| `get_dom_tree` | Get simplified interactive DOM tree |
+| `execute_javascript` | Run arbitrary JavaScript |
+
+## Example Workflow
+
+```json
+[
+  { "tool": "open_url", "arguments": { "url": "https://www.google.com/travel/flights" } },
+  { "tool": "fill", "arguments": { "label": "Where from?", "value": "San Francisco" } },
+  { "tool": "type", "arguments": { "placeholder": "Where to?", "text_to_type": "London" } },
+  { "tool": "click", "arguments": { "role": { "role": "button", "name": "Search" } } }
+]
+```
 
 ## Requirements
 
