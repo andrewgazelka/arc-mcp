@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
 
 permissions:
   contents: write
@@ -35,14 +33,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          else
-            VERSION=$(node -p "require('./package.json').version")
-            echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-            echo "TAG=v${VERSION}" >> $GITHUB_OUTPUT
-          fi
+          echo "VERSION=0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+          echo "TAG=v0.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
