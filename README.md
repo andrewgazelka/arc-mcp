@@ -24,7 +24,7 @@
 ### Claude Code
 
 ```bash
-claude mcp add --scope user --transport stdio arc bunx "github:andrewgazelka/arc-mcp#packages/server"
+claude mcp add --scope user --transport stdio arc bunx github:andrewgazelka/arc-mcp
 ```
 
 Or manually add to your MCP settings:
@@ -34,7 +34,7 @@ Or manually add to your MCP settings:
   "mcpServers": {
     "arc": {
       "command": "bunx",
-      "args": ["github:andrewgazelka/arc-mcp#packages/server"]
+      "args": ["github:andrewgazelka/arc-mcp"]
     }
   }
 }
