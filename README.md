@@ -23,13 +23,13 @@ That's it! The extension will be installed and ready to use.
 
 ## Use Cases
 
-<img src="https://cdn.simpleicons.org/googlemaps/4285F4" width="16" height="16" /> **Flight Search** — Compare prices across airlines, check availability, book tickets
+<img src=".github/assets/icon-flight.svg" width="16" height="16" /> **Flight Search** — Compare prices across airlines, check availability, book tickets
 
-<img src="https://cdn.simpleicons.org/amazon/FF9900" width="16" height="16" /> **Shopping** — Search products, read reviews, add to cart, checkout
+<img src=".github/assets/icon-shopping.svg" width="16" height="16" /> **Shopping** — Search products, read reviews, add to cart, checkout
 
-<img src="https://cdn.simpleicons.org/instacart/43B02A" width="16" height="16" /> **Groceries** — Navigate store catalog, build cart, schedule delivery
+<img src=".github/assets/icon-groceries.svg" width="16" height="16" /> **Groceries** — Navigate store catalog, build cart, schedule delivery
 
-<img src="https://cdn.simpleicons.org/databricks/FF3621" width="16" height="16" /> **Research** — Open multiple sources, extract data, synthesize information
+<img src=".github/assets/icon-research.svg" width="16" height="16" /> **Research** — Open multiple sources, extract data, synthesize information
 
 ## Tools
 
