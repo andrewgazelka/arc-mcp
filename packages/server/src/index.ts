@@ -33,6 +33,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         name: 'execute',
         description:
           'Execute Node.js code with Arc browser automation functions available. ' +
+          'IMPORTANT: Use "return" to get results back (e.g., "return await browser.click(...)"). ' +
           'Available functions: browser.click(locator, options?), browser.fill(locator, value, options?), ' +
           'browser.type(locator, text, options?), browser.selectOption(locator, option, options?), ' +
           'browser.getPageStructure(maxDepth?, tabId?), browser.openUrl(url, newTab?), ' +

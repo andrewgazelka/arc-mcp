@@ -18129,7 +18129,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "execute",
-        description: "Execute Node.js code with Arc browser automation functions available. Available functions: browser.click(locator, options?), browser.fill(locator, value, options?), browser.type(locator, text, options?), browser.selectOption(locator, option, options?), browser.getPageStructure(maxDepth?, tabId?), browser.openUrl(url, newTab?), browser.getCurrentTab(), browser.listTabs(), browser.closeTab(tabId), browser.switchToTab(tabId), browser.reloadTab(tabId?), browser.goBack(tabId?), browser.goForward(tabId?), browser.executeJavaScript(code, tabId?). Locator types: { role: { role: string, name?: string } } | { label: string } | { text: string } | { placeholder: string } | { css: string }",
+        description: 'Execute Node.js code with Arc browser automation functions available. IMPORTANT: Use "return" to get results back (e.g., "return await browser.click(...)"). Available functions: browser.click(locator, options?), browser.fill(locator, value, options?), browser.type(locator, text, options?), browser.selectOption(locator, option, options?), browser.getPageStructure(maxDepth?, tabId?), browser.openUrl(url, newTab?), browser.getCurrentTab(), browser.listTabs(), browser.closeTab(tabId), browser.switchToTab(tabId), browser.reloadTab(tabId?), browser.goBack(tabId?), browser.goForward(tabId?), browser.executeJavaScript(code, tabId?). Locator types: { role: { role: string, name?: string } } | { label: string } | { text: string } | { placeholder: string } | { css: string }',
         inputSchema: {
           type: "object",
           properties: {
