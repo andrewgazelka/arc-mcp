@@ -24,11 +24,7 @@
 ### Claude Code
 
 ```bash
-claude mcp add \
-  --scope user \
-  --transport stdio \
-  arc \
-  bunx "github:andrewgazelka/arc-mcp#packages/server"
+claude mcp add --scope user --transport stdio arc bunx "github:andrewgazelka/arc-mcp#packages/server"
 ```
 
 Or manually add to your MCP settings:
