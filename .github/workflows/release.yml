@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build TypeScript
+        run: bun run build
+
+      - name: Package MCPB
+        run: bunx @anthropic-ai/mcpb pack
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.mcpb"
+          body: |
+            ## Installation
+
+            1. Download the `arc-mcp-${{ steps.get_version.outputs.VERSION }}.mcpb` file below
+            2. Open Claude Desktop
+            3. Go to Settings > Extensions
+            4. Click "Install Extension"
+            5. Select the downloaded `.mcpb` file
+
+            ## What's New
+
+            See the [commit history](https://github.com/andrewgazelka/arc-mcp/commits/${{ github.ref_name }}) for changes in this release.
+          draft: false
+          prerelease: false
