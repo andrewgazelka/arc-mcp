@@ -17,5 +17,5 @@ export interface ExecuteOptions {
  * @returns The result of the JavaScript execution
  * @throws Error if the AppleScript execution fails
  */
-export declare function executeArcJavaScript(code: string, options?: ExecuteOptions): Promise<any>;
+export declare function executeArcJavaScript(code: string, options?: ExecuteOptions): any;
 //# sourceMappingURL=index.d.ts.map

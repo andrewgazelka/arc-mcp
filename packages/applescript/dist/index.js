@@ -1,6 +1,4 @@
-import { exec } from "child_process";
-import { promisify } from "util";
-const execAsync = promisify(exec);
+import { execSync } from "child_process";
 /**
  * Executes JavaScript code in an Arc browser tab via AppleScript.
  *
@@ -9,28 +7,26 @@ const execAsync = promisify(exec);
  * @returns The result of the JavaScript execution
  * @throws Error if the AppleScript execution fails
  */
-export async function executeArcJavaScript(code, options = {}) {
-    const { tabId, timeout = 30000 } = options;
+export function executeArcJavaScript(code, options = {}) {
+    const { tabId } = options;
     // Base64 encode the JavaScript to avoid escaping issues
     const encodedCode = Buffer.from(code).toString("base64");
-    // Build the AppleScript
+    // Build the AppleScript - use atob() in JavaScript instead of shell script
     const tabSelector = tabId ? `tab id ${tabId}` : "active tab";
     const appleScript = `
 tell application "Arc"
   tell front window
     tell ${tabSelector}
-      set encodedCode to "${encodedCode}"
-      set decodedCode to do shell script "echo " & quoted form of encodedCode & " | base64 -d"
-      execute javascript decodedCode
+      execute javascript "eval(atob('${encodedCode}'))"
     end tell
   end tell
 end tell
   `.trim();
     try {
-        const { stdout } = await execAsync(`osascript -e '${appleScript}'`, {
-            timeout,
+        const result = execSync(`osascript -e '${appleScript.replace(/'/g, "'\\''")}'`, {
+            encoding: 'utf-8',
         });
-        return parseAppleScriptResult(stdout.trim());
+        return parseAppleScriptResult(result.trim());
     }
     catch (error) {
         throw new Error(`Failed to execute Arc JavaScript: ${error.message}`);

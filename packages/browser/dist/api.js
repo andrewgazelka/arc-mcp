@@ -10,7 +10,7 @@ import { BROWSER_BUNDLE } from './bundle-export.js';
 async function executeBrowserAction(actionFn, args, tabId) {
     const code = `
     ${BROWSER_BUNDLE}
-    ${actionFn}(${args})
+    JSON.stringify(${actionFn}(${args}))
   `;
     const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
     return JSON.parse(result);

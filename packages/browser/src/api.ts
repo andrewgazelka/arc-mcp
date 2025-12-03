@@ -18,7 +18,7 @@ async function executeBrowserAction(
 ): Promise<ActionResult> {
   const code = `
     ${BROWSER_BUNDLE}
-    ${actionFn}(${args})
+    JSON.stringify(${actionFn}(${args}))
   `;
 
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });

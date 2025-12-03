@@ -2,14 +2,12 @@ import { test, expect, describe } from "vitest";
 import { click, fill, type, selectOption, getPageStructure } from "./api.js";
 describe("browser API", () => {
     describe("getPageStructure", () => {
-        test.skip("should return page structure", async () => {
-            // Skipped: Requires Arc to be running
+        test("should return page structure", async () => {
             const structure = await getPageStructure(1);
             // Structure may be null for about:blank, that's ok
             expect(structure === null || typeof structure === "object").toBe(true);
         });
-        test.skip("should respect maxDepth parameter", async () => {
-            // Skipped: Requires Arc to be running
+        test("should respect maxDepth parameter", async () => {
             const shallow = await getPageStructure(1);
             const deep = await getPageStructure(3);
             // Both should be valid (null or object)
@@ -18,8 +16,7 @@ describe("browser API", () => {
         });
     });
     describe("click", () => {
-        test.skip("should accept role locator", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept role locator", async () => {
             try {
                 await click({ role: { role: "button", name: "test" } });
             }
@@ -28,8 +25,7 @@ describe("browser API", () => {
                 expect(e.message).toContain("Could not find element");
             }
         });
-        test.skip("should accept css locator", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept css locator", async () => {
             try {
                 await click({ css: "button.test" });
             }
@@ -38,8 +34,7 @@ describe("browser API", () => {
                 expect(e.message).toContain("Could not find element");
             }
         });
-        test.skip("should accept text locator", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept text locator", async () => {
             try {
                 await click({ text: "Click me" });
             }
@@ -50,8 +45,7 @@ describe("browser API", () => {
         });
     });
     describe("fill", () => {
-        test.skip("should accept label locator", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept label locator", async () => {
             try {
                 await fill({ label: "Email" }, "test@example.com");
             }
@@ -60,8 +54,7 @@ describe("browser API", () => {
                 expect(e.message).toContain("Could not find element");
             }
         });
-        test.skip("should accept placeholder locator", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept placeholder locator", async () => {
             try {
                 await fill({ placeholder: "Enter email" }, "test@example.com");
             }
@@ -72,8 +65,7 @@ describe("browser API", () => {
         });
     });
     describe("type", () => {
-        test.skip("should accept locator and text", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept locator and text", async () => {
             try {
                 await type({ css: "input" }, "hello");
             }
@@ -84,8 +76,7 @@ describe("browser API", () => {
         });
     });
     describe("selectOption", () => {
-        test.skip("should accept locator and option", async () => {
-            // Skipped: Requires Arc to be running
+        test("should accept locator and option", async () => {
             try {
                 await selectOption({ css: "select" }, "option1");
             }

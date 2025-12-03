@@ -17862,29 +17862,25 @@ __export(dist_exports, {
 });
 
 // ../applescript/dist/index.js
-import { exec } from "child_process";
-import { promisify } from "util";
-var execAsync = promisify(exec);
-async function executeArcJavaScript(code, options = {}) {
-  const { tabId, timeout = 3e4 } = options;
+import { execSync } from "child_process";
+function executeArcJavaScript(code, options = {}) {
+  const { tabId } = options;
   const encodedCode = Buffer.from(code).toString("base64");
   const tabSelector = tabId ? `tab id ${tabId}` : "active tab";
   const appleScript = `
 tell application "Arc"
   tell front window
     tell ${tabSelector}
-      set encodedCode to "${encodedCode}"
-      set decodedCode to do shell script "echo " & quoted form of encodedCode & " | base64 -d"
-      execute javascript decodedCode
+      execute javascript "eval(atob('${encodedCode}'))"
     end tell
   end tell
 end tell
   `.trim();
   try {
-    const { stdout } = await execAsync(`osascript -e '${appleScript}'`, {
-      timeout
+    const result = execSync(`osascript -e '${appleScript.replace(/'/g, "'\\''")}'`, {
+      encoding: "utf-8"
     });
-    return parseAppleScriptResult(stdout.trim());
+    return parseAppleScriptResult(result.trim());
   } catch (error2) {
     throw new Error(`Failed to execute Arc JavaScript: ${error2.message}`);
   }
@@ -17900,10 +17896,10 @@ function parseAppleScriptResult(result) {
 }
 
 // ../browser/dist/applescript.js
-import { execSync } from "child_process";
+import { execSync as execSync2 } from "child_process";
 function executeAppleScript(script) {
   try {
-    const result = execSync(`osascript -e '${script.replace(/'/g, "'\\''")}'`, {
+    const result = execSync2(`osascript -e '${script.replace(/'/g, "'\\''")}'`, {
       encoding: "utf-8"
     });
     return result.trim();
@@ -18044,7 +18040,7 @@ var BROWSER_BUNDLE = "(function() {\n  'use strict';\n\n  function findByRole(ro
 async function executeBrowserAction(actionFn, args, tabId) {
   const code = `
     ${BROWSER_BUNDLE}
-    ${actionFn}(${args})
+    JSON.stringify(${actionFn}(${args}))
   `;
   const result = await executeArcJavaScript(code, { tabId: tabId?.toString() });
   return JSON.parse(result);

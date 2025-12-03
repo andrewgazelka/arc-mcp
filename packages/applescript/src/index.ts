@@ -1,7 +1,4 @@
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
+import { execSync } from "child_process";
 
 export interface ExecuteOptions {
   /**
@@ -24,11 +21,11 @@ export interface ExecuteOptions {
  * @returns The result of the JavaScript execution
  * @throws Error if the AppleScript execution fails
  */
-export async function executeArcJavaScript(
+export function executeArcJavaScript(
   code: string,
   options: ExecuteOptions = {}
-): Promise<any> {
-  const { tabId, timeout = 30000 } = options;
+): any {
+  const { tabId } = options;
 
   // Base64 encode the JavaScript to avoid escaping issues
   const encodedCode = Buffer.from(code).toString("base64");
@@ -46,10 +43,10 @@ end tell
   `.trim();
 
   try {
-    const { stdout } = await execAsync(`osascript -e '${appleScript.replace(/'/g, "'\\''")}'`, {
-      timeout,
+    const result = execSync(`osascript -e '${appleScript.replace(/'/g, "'\\''")}'`, {
+      encoding: 'utf-8',
     });
-    return parseAppleScriptResult(stdout.trim());
+    return parseAppleScriptResult(result.trim());
   } catch (error: any) {
     throw new Error(`Failed to execute Arc JavaScript: ${error.message}`);
   }
