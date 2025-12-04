@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Package MCPB
-        run: npx @anthropic-ai/mcpb pack
+        run: npm run pack
 
       - name: Get version
         id: version

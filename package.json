@@ -16,7 +16,7 @@
     "typecheck": "npm run typecheck -w @arc-mcp/applescript && npm run typecheck -w @arc-mcp/browser && npm run typecheck -w arc-mcp-server",
     "test": "vitest run",
     "test:watch": "vitest",
-    "pack": "npm run build && cd packages/server && npx @anthropic-ai/mcpb pack",
+    "pack": "npm run build && node scripts/pack.mjs",
     "ci": "npm run build && npm run typecheck && npm run test"
   },
   "devDependencies": {

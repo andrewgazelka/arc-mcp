@@ -5,6 +5,7 @@ node_modules
 out
 *.tgz
 *.mcpb
+.pack
 
 # bundled browser code (generated)
 packages/browser/src/bundle-export.ts
